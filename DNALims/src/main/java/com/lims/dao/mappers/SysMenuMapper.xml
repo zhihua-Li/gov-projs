@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="SysMenuMapper">
+
+	<select id="findRootSysMenuListByRoleIds" parameterType="SysRole"
+		resultType="SysMenu">
+		select distinct t.ID as id,
+				t.MENU_NAME as menuName,
+				t.MENU_LINK as menuLink,
+				t.MENU_LEVEL as menuLevel,
+				t.PARENT_MENU_ID as parentMenuId,
+				t.ACTIVE_FLAG as activeFlag,
+				t.MENU_SORT as menuSort
+		from SYS_MENU t, SYS_ROLE_MENU s
+		where t.ID=s.MENU_ID
+			AND t.MENU_LEVEL='0'
+			AND t.ACTIVE_FLAG='1'
+			AND s.ROLE_ID in
+			<foreach item="sysRole" collection="list" open="(" separator="," close=")">
+				#{sysRole.id}
+			</foreach>
+		order by t.MENU_SORT
+	</select>
+
+	<select id="findChildSysMenuListByRoleIds" parameterType="SysRole"
+		resultType="SysMenu">
+		<![CDATA[
+			select distinct t.ID as id,
+					t.MENU_NAME as menuName,
+					t.MENU_LINK as menuLink,
+					t.MENU_LEVEL as menuLevel,
+					t.PARENT_MENU_ID as parentMenuId,
+					t.ACTIVE_FLAG as activeFlag,
+					t.MENU_SORT as menuSort
+			from SYS_MENU t, SYS_ROLE_MENU s
+			where t.ID=s.MENU_ID
+				AND t.MENU_LEVEL<>'0'
+				AND t.ACTIVE_FLAG='1'
+				AND s.ROLE_ID in
+		]]>
+			<foreach item="sysRole" collection="list" open="(" separator="," close=")">
+				#{sysRole.id}
+			</foreach>
+		order by t.ID, t.MENU_SORT
+	</select>
+
+	<select id="findSysMenuById" parameterType="java.lang.String"
+		resultType="SysMenu">
+		<![CDATA[
+			select t.ID as id,
+					t.MENU_NAME as menuName,
+					t.MENU_LINK as menuLink,
+					t.MENU_LEVEL as menuLevel,
+					t.PARENT_MENU_ID as parentMenuId,
+					t.ACTIVE_FLAG as activeFlag,
+					t.MENU_SORT as menuSort
+			from SYS_MENU t
+		]]>
+			where t.ID=#{value}
+	</select>
+
+	<select id="findSysMenuByParentId" parameterType="java.lang.String"
+		resultType="SysMenu">
+		select t.ID as id,
+			t.MENU_NAME as menuName,
+			t.MENU_LINK as menuLink,
+			t.MENU_LEVEL as menuLevel,
+			t.PARENT_MENU_ID as parentMenuId,
+			t.ACTIVE_FLAG as activeFlag,
+			t.MENU_SORT as menuSort
+		from SYS_MENU t
+		where t.ACTIVE_FLAG='1'
+
+		<if test="_parameter == null">
+			and t.PARENT_MENU_ID is null
+		</if>
+		<if test="_parameter != null">
+			and t.PARENT_MENU_ID=#{value}
+		</if>
+
+		order by t.ID
+	</select>
+
+	<select id="findSysRoleMenuByRoleId" parameterType="java.lang.String"
+		resultType="SysRoleMenu">
+		select t.ID as id,
+			t.ROLE_ID as roleId,
+			t.MENU_ID as menuId
+		from SYS_ROLE_MENU t
+		where t.ROLE_ID=#{value}
+	</select>
+</mapper>

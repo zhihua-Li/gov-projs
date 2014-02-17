@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="DictItemMapper">
+
+	<cache type="org.mybatis.caches.oscache.OSCache"
+		eviction="LRU"
+		flushInterval="21600000"
+		size="1024"
+		readOnly="true" />
+
+	  <select id="findDictItemsByDictInfoType" parameterType="String"
+	  	resultType="DictItem" useCache="true" flushCache="false">
+	  	select t.ID as id,
+	  		t.DICT_INFO_TYPE as dictInfoType,
+	  		t.DICT_KEY as dictKey,
+	  		t.DICT_VALUE as dictValue,
+	  		t.DICT_SORT as dictSort
+	  	from DICT_ITEM t
+	  	where t.DICT_INFO_TYPE=#{value}
+	  	order by t.DICT_SORT
+	  </select>
+
+	  <select id="findDictItem" parameterType="DictItem"
+	  	resultType="DictItem" useCache="true" flushCache="false">
+	  	select t.ID as id,
+	  		t.DICT_INFO_TYPE as dictInfoType,
+	  		t.DICT_KEY as dictKey,
+	  		t.DICT_VALUE as dictValue,
+	  		t.DICT_SORT as dictSort
+	  	from DICT_ITEM t
+	  	<where>
+	  		<if test ="dictInfoType != null">
+	  			t.DICT_INFO_TYPE=#{dictInfoType}
+	  		</if>
+	  		<if test ="dictKey != null">
+	  			AND t.DICT_KEY=#{dictKey}
+	  		</if>
+	  	</where>
+	  </select>
+
+
+
+	  <insert id="addDictItem" parameterType="DictItem" flushCache="true">
+	  	insert into DICT_ITEM (
+	  		ID,
+	  		DICT_INFO_TYPE,
+	  		DICT_KEY,
+	  		DICT_VALUE,
+	  		DICT_SORT
+	  	) values (
+	  		#{id, jdbcType=VARCHAR},
+	  		#{dictInfoType, jdbcType=VARCHAR},
+	  		#{dictKey, jdbcType=VARCHAR},
+	  		#{dictValue, jdbcType=VARCHAR},
+	  		#{dictSort, jdbcType=INTEGER}
+	  	)
+	  </insert>
+
+
+		<update id="updateDictItem" parameterType="DictItem" flushCache="true">
+		  	update DICT_ITEM
+		  		<set>
+		  			<if test="dictValue != null">
+		  				DICT_VALUE=#{dictValue, jdbcType=VARCHAR}
+		  			</if>
+		  		</set>
+		  	where id=#{id}
+	  </update>
+
+	  <delete id="deleteDictItemById" parameterType="java.lang.String">
+	  	delete from dict_item where id=#{value}
+	  </delete>
+
+
+</mapper>

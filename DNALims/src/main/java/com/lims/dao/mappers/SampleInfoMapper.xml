@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SampleInfoMapper">
+	  <select id="findSampleInfoQueryList" parameterType="SampleInfoQuery"
+	  	resultType="SampleInfoView">
+	  	<if test="endRowNum != 0">
+			select * from (
+				select t.*, rownum rn from (
+		</if>
+
+		<if test="sortColumn != null">
+			select si.* from (
+		</if>
+
+			select t1.id as id,
+				t1.sample_no as sampleNo,
+				t1.consignment_id as consignmentId,
+				t1.accept_status as acceptStatus,
+				t1.accept_date as acceptDate,
+				t1.accept_user as acceptUser,
+				t1.accept_user_name as acceptUserName,
+				t1.consignment_no as consignmentNo,
+				t1.organization_id as organizationId,
+				t1.organization_sub_name as organizationSubName,
+				t1.board_id as boardId,
+				t1.sample_position as samplePosition,
+				b.board_no as boardNo,
+				b.import_date as importDate,
+				b.import_user as importUser,
+        		co.organization_name as organizationName
+			from (
+				select s.id,
+					s.sample_no,
+					s.consignment_id,
+					s.accept_status,
+					s.accept_date,
+					s.accept_user,
+					c.consignment_no,
+					c.organization_id,
+					c.organization_sub_name,
+					bsm.board_id,
+					bsm.sample_position,
+					su.full_name as accept_user_name
+				from sample_info s, consignment c, board_sample_map bsm, sys_user su
+				where s.consignment_id=c.id
+          			and s.id=bsm.sample_id(+)
+          			and s.accept_user=su.id(+)
+
+					<if test="fuzzyFlag != null">
+			    		<if test="sampleNo != null">
+							AND s.sample_no like '%'||#{sampleNo}||'%'
+						</if>
+						<if test="consignmentNo != null">
+							AND c.consignment_no like '%'||#{consignmentNo}||'%'
+						</if>
+			    	</if>
+			    	<if test="fuzzyFlag == null">
+			    		<if test="sampleNo != null">
+							AND s.sample_no=#{sampleNo}
+						</if>
+						<if test="consignmentNo != null">
+							AND c.consignment_no=#{consignmentNo}
+						</if>
+			    	</if>
+
+					<if test="consignmentId != null">
+						and s.consignment_id=#{consignmentId}
+					</if>
+					<if test="acceptStatus != null">
+						and s.accept_status=#{acceptStatus}
+					</if>
+			) t1, board_info b, consign_organization co
+			where t1.board_id=b.id(+) and t1.organization_id=co.id(+)
+
+		<if test="sortColumn != null">
+			) si order by ${sortColumn} ${sortOrder}
+		</if>
+		<if test="sortColumn == null">
+			order by t1.accept_Date desc
+		</if>
+
+	    <if test="endRowNum != 0">
+			) t
+			<![CDATA[
+				where rownum <= #{endRowNum}) where rn >= #{startRowNum}
+			]]>
+		</if>
+	  </select>
+
+	  <select id="findSampleInfoQueryListCount" parameterType="SampleInfoQuery"
+	  		resultType="int">
+		  select count(s.id)
+				from sample_info s, consignment c
+				where s.consignment_id=c.id
+					<if test="consignmentId != null">
+						and s.consignment_id=#{consignmentId}
+					</if>
+
+					<if test="fuzzyFlag != null">
+			    		<if test="sampleNo != null">
+							AND s.sample_no like '%'||#{sampleNo}||'%'
+						</if>
+						<if test="consignmentNo != null">
+							AND c.consignment_no like '%'||#{consignmentNo}||'%'
+						</if>
+			    	</if>
+			    	<if test="fuzzyFlag == null">
+			    		<if test="sampleNo != null">
+							AND s.sample_no=#{sampleNo}
+						</if>
+						<if test="consignmentNo != null">
+							AND c.consignment_no=#{consignmentNo}
+						</if>
+			    	</if>
+
+					<if test="acceptStatus != null">
+						and s.accept_status=#{acceptStatus}
+					</if>
+	  </select>
+
+	  <select id="selectSampleCountByBoardId" parameterType="java.lang.String" resultType="int">
+		select count(distinct t.SAMPLE_ID) from BOARD_SAMPLE_MAP t where t.BOARD_ID=#{value}
+	  </select>
+
+
+
+	  <select id="findSampleInfoViewList" parameterType="SampleInfoQuery"
+	  	resultType="SampleInfoView">
+	  	<if test="endRowNum != 0">
+			select * from (
+				select t.*, rownum rn from (
+		</if>
+
+		    select t1.id as id,
+		    	t1.sample_name as sampleName,
+		    	t1.sample_no as sampleNo,
+		    	t1.sample_desc as sampleDesc,
+		    	t1.create_date as createDate,
+		    	t1.create_user as createUser,
+		    	t1.remark as remark,
+		    	t1.consignment_id as consignmentId,
+		    	t1.accept_status as acceptStatus,
+		    	t1.accept_date as acceptDate,
+		    	su1.full_name as createUserName,
+		    	su2.full_name as acceptUserName
+			from sample_info t1
+				left join sys_user su1 on t1.create_user=su1.id
+				left join sys_user su2 on t1.accept_user=su2.id
+			<where>
+				<if test="sampleNo != null">
+					t1.sample_no=#{sampleNo}
+				</if>
+				<if test="id != null">
+					and t1.id=#{id}
+				</if>
+				<if test="consignmentId != null">
+					and t1.CONSIGNMENT_ID=#{consignmentId}
+				</if>
+				<if test="acceptStatus != null">
+					and t1.accept_status=#{acceptStatus}
+				</if>
+				<if test="boardId != null">
+					and t1.id in (
+						select sample_id from board_sample_map where board_id=#{boardId}
+					)
+				</if>
+			</where>
+
+			order by t1.create_date desc
+
+	    <if test="endRowNum != 0">
+			) t
+			<![CDATA[
+				where rownum <= #{endRowNum}) where rn >= #{startRowNum}
+			]]>
+		</if>
+	  </select>
+
+	  <select id="findSampleInfoViewListCount" parameterType="SampleInfoQuery"
+	  		resultType="int">
+
+		select count(t.id)
+		from sample_info t
+		<where>
+			<if test="sampleNo != null">
+				t.sample_no=#{sampleNo}
+			</if>
+			<if test="id != null">
+				and t.id=#{id}
+			</if>
+			<if test="consignmentId != null">
+				and t.CONSIGNMENT_ID=#{consignmentId}
+			</if>
+				<if test="acceptStatus != null">
+					and t.accept_status=#{acceptStatus}
+				</if>
+				<if test="boardId != null">
+					and t1.id in (
+						select sample_id from board_sample_map where board_id=#{boardId}
+					)
+				</if>
+		</where>
+	  </select>
+
+	  <select id="findSampleInfoCountByConsignmentId" parameterType="String"
+	  	resultType="int">
+	  	select count(t.id)
+	  	from sample_info t
+	  	where t.consignment_id=#{value} and t.accept_status='1'
+	  </select>
+
+
+
+	  <select id="findSampleInfoBySampleNo" parameterType="String"
+	  	resultType="SampleInfoView">
+	  	select
+	  		s.ID as id,
+	  		s.SAMPLE_NAME as sampleName,
+	  		s.SAMPLE_NO as sampleNo,
+	  		s.SAMPLE_DESC as sampleDesc,
+	  		s.CREATE_DATE as createDate,
+	  		s.CREATE_USER as createUser,
+	  		s.accept_user as acceptUser,
+	  		s.accept_date as acceptDate,
+	  		s.REMARK as remark,
+	  		s.CONSIGNMENT_ID as consignmentId,
+	  		s.ACCEPT_STATUS as acceptStatus,
+	  		u.FULL_NAME as createUserName,
+	  		c.CONSIGNMENT_NO as consignmentNo,
+		    su2.full_name as acceptUserName
+	  	from SAMPLE_INFO s
+	  		left join SYS_USER u on s.create_user=u.id
+	  		left join CONSIGNMENT c on s.CONSIGNMENT_ID=c.ID
+	  		left join sys_user su2 on s.accept_user=su2.id
+	  	where s.SAMPLE_NO=#{value}
+	  </select>
+
+	  <select id="findSampleInfoById" parameterType="String"
+	  	resultType="SampleInfoView">
+	  	select
+	  		s.ID as id,
+	  		s.SAMPLE_NAME as sampleName,
+	  		s.SAMPLE_NO as sampleNo,
+	  		s.SAMPLE_DESC as sampleDesc,
+	  		s.CREATE_DATE as createDate,
+	  		s.CREATE_USER as createUser,
+	  		s.accept_user as acceptUser,
+	  		s.accept_date as acceptDate,
+	  		s.REMARK as remark,
+	  		s.CONSIGNMENT_ID as consignmentId,
+	  		s.ACCEPT_STATUS as acceptStatus,
+	  		u.FULL_NAME as createUserName,
+	  		c.CONSIGNMENT_NO as consignmentNo,
+		    su2.full_name as acceptUserName
+	  	from SAMPLE_INFO s
+	  		left join SYS_USER u on s.create_user=u.id
+	  		left join CONSIGNMENT c on s.CONSIGNMENT_ID=c.ID
+	  		left join sys_user su2 on s.accept_user=su2.id
+	  	where s.id=#{value}
+	  </select>
+
+	  <insert id="insertSampleInfo" parameterType="SampleInfo">
+	  	insert into SAMPLE_INFO (
+			ID,
+	  		SAMPLE_NAME,
+	  		SAMPLE_NO,
+	  		SAMPLE_DESC,
+	  		CREATE_DATE,
+	  		CREATE_USER,
+	  		REMARK,
+	  		CONSIGNMENT_ID,
+	  		ACCEPT_STATUS,
+	  		ACCEPT_DATE,
+	  		ACCEPT_USER
+	  	) values (
+	  		#{id, jdbcType=VARCHAR},
+	  		#{sampleName, jdbcType=VARCHAR},
+	  		#{sampleNo, jdbcType=VARCHAR},
+	  		#{sampleDesc, jdbcType=VARCHAR},
+	  		#{createDate, jdbcType=TIMESTAMP},
+	  		#{createUser, jdbcType=VARCHAR},
+	  		#{remark, jdbcType=VARCHAR},
+	  		#{consignmentId, jdbcType=VARCHAR},
+	  		#{acceptStatus, jdbcType=CHAR},
+	  		#{acceptDate, jdbcType=TIMESTAMP},
+	  		#{acceptUser, jdbcType=VARCHAR}
+	  	)
+
+	  </insert>
+
+	  <update id="updateSampleInfo" parameterType="SampleInfo">
+	  	update SAMPLE_INFO
+	  		set
+	  			SAMPLE_NAME=#{sampleName, jdbcType=VARCHAR},
+		  		SAMPLE_NO=#{sampleNo, jdbcType=VARCHAR},
+		  		SAMPLE_DESC=#{sampleDesc, jdbcType=VARCHAR},
+		  		REMARK=#{remark, jdbcType=VARCHAR},
+		  		CONSIGNMENT_ID=#{consignmentId, jdbcType=VARCHAR},
+		  		ACCEPT_STATUS=#{acceptStatus, jdbcType=CHAR},
+		  		ACCEPT_DATE=#{acceptDate, jdbcType=TIMESTAMP},
+		  		ACCEPT_USER=#{acceptUser, jdbcType=VARCHAR},
+		  		UPDATE_DATE=#{updateDate, jdbcType=TIMESTAMP},
+		  		UPDATE_USER=#{updateUser, jdbcType=VARCHAR}
+	  		where ID=#{id, jdbcType=VARCHAR}
+	  </update>
+
+	  <update id="updateSampleInfoBySelective" parameterType="SampleInfo">
+	  	update SAMPLE_INFO
+	  		set
+	  			UPDATE_DATE=#{updateDate, jdbcType=TIMESTAMP},
+	  			UPDATE_USER=#{updateUser, jdbcType=VARCHAR}
+		  		<if test="sampleName != null">
+		  			, SAMPLE_NAME=#{sampleName, jdbcType=VARCHAR}
+		  		</if>
+		  		<if test="sampleNo != null">
+		  			, SAMPLE_NO=#{sampleNo, jdbcType=VARCHAR}
+		  		</if>
+	  		where ID=#{id, jdbcType=VARCHAR}
+	  </update>
+
+	  <update id="updateAcceptStatusBatch" parameterType="java.util.HashMap">
+	  	update SAMPLE_INFO
+	  		set UPDATE_DATE=#{updateDate, jdbcType=TIMESTAMP},
+	  			UPDATE_USER=#{updateUser, jdbcType=VARCHAR},
+	  			ACCEPT_STATUS=#{acceptStatus, jdbcType=CHAR},
+		  		ACCEPT_DATE=#{acceptDate, jdbcType=TIMESTAMP},
+		  		ACCEPT_USER=#{acceptUser, jdbcType=VARCHAR}
+		  	where SAMPLE_NO in
+		  	<foreach collection="sampleNoList" index="index" item="sampleNo" open="(" separator="," close=")">
+				#{sampleNo}
+			</foreach>
+	  </update>
+
+	  <select id="insertBatchSampleInfo" parameterType="ArrayList">
+	  	insert into SAMPLE_INFO (
+			ID,
+	  		SAMPLE_NAME,
+	  		SAMPLE_NO,
+	  		SAMPLE_DESC,
+	  		CREATE_DATE,
+	  		CREATE_USER,
+	  		REMARK,
+	  		CONSIGNMENT_ID,
+	  		ACCEPT_STATUS,
+	  		ACCEPT_DATE,
+	  		ACCEPT_USER
+	  	)
+		<foreach collection="list" item="sampleInfo" index="index" separator="union all">
+			select
+				#{sampleInfo.id, jdbcType=VARCHAR},
+				#{sampleInfo.sampleName, jdbcType=VARCHAR},
+				#{sampleInfo.sampleNo, jdbcType=VARCHAR},
+				#{sampleInfo.sampleDesc, jdbcType=VARCHAR},
+				#{sampleInfo.createDate, jdbcType=TIMESTAMP},
+				#{sampleInfo.createUser, jdbcType=VARCHAR},
+				#{sampleInfo.remark, jdbcType=VARCHAR},
+		  		#{sampleInfo.consignmentId, jdbcType=VARCHAR},
+		  		#{sampleInfo.acceptStatus, jdbcType=CHAR},
+	  			#{sampleInfo.acceptDate, jdbcType=TIMESTAMP},
+	  			#{sampleInfo.acceptUser, jdbcType=VARCHAR}
+			from dual
+		</foreach>
+	  </select>
+
+	<select id="findSampleCountByAcceptDate" parameterType="SampleInfoQuery"
+		resultType="java.util.HashMap">
+		<if test="sortColumn != null">
+			select si.* from (
+		</if>
+
+		select tt.organization_code as organizationCode, tt.organization_name as organizationName, sum(tt.count1+tt.count2) as sampleCount from (
+			select co.organization_code, co.organization_name, t.sampleCount as count1, 0 as count2 from
+			(
+				select consignment_id, count(id) as sampleCount from sample_info
+				<where>
+					<if test="acceptDateStart != null">
+						<![CDATA[	accept_date>=#{acceptDateStart}		]]>
+					</if>
+					<if test="acceptDateEnd != null">
+						<![CDATA[	accept_date<=#{acceptDateEnd}		]]>
+					</if>
+				</where>
+				group by consignment_id
+			) t, consignment c, consign_organization co
+			where t.consignment_id=c.id and c.organization_id=co.id
+
+			union
+
+			select co1.organization_code, co1.organization_name, 0 as count1, t1.sampleCount as count2 from (
+				select consign_organization_id, count(id) as sampleCount from codis_sample
+				<where>
+					<if test="acceptDateStart != null">
+						<![CDATA[	import_date>=#{acceptDateStart}		]]>
+					</if>
+					<if test="acceptDateEnd != null">
+						<![CDATA[	import_date<=#{acceptDateEnd}		]]>
+					</if>
+				</where>
+				group by consign_organization_id
+			) t1, consign_organization co1
+			where t1.consign_organization_id=co1.id
+		) tt  group by tt.organization_code, tt.organization_name
+		<if test="sortColumn != null">
+			) si order by ${sortColumn} ${sortOrder}
+		</if>
+		<if test="sortColumn == null">
+			order by co.organization_code
+		</if>
+	</select>
+
+	  <delete id="deleteSampleInfoById" parameterType="java.lang.String">
+	  	delete from sample_info where id=#{value}
+	  </delete>
+
+	  <delete id="deleteSampleInfoByConsignmentId" parameterType="java.lang.String">
+	  	delete from sample_info where CONSIGNMENT_ID=#{value}
+	  </delete>
+
+	  <delete id="deleteSampleInfoByBoardId" parameterType="java.lang.String">
+	  	delete from sample_info s where s.id in (
+	  		select bsm.sample_id from board_sample_map bsm where bsm.BOARD_ID=#{value}
+	  	)
+	  </delete>
+
+</mapper>

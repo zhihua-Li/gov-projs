@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ExamineRecordMapper">
+
+	<select id="findExamineRecordByBoardId" parameterType="java.lang.String"
+		resultType="ExamineRecord">
+		select ID as id,
+			EXAMINE_DATE as examineDate,
+			EXAMINE_USER as examineUserId,
+			EXAMINE_INSTRUMENT_NO as examineInstrumentNo,
+			BOARD_ID as boardId
+		from EXAMINE_RECORD
+		where BOARD_ID=#{value}
+	</select>
+
+	<insert id="insertExamineRecord" parameterType="ExamineRecord">
+		insert into EXAMINE_RECORD (
+			ID,
+			EXAMINE_DATE,
+			EXAMINE_INSTRUMENT_NO,
+	        EXAMINE_USER,
+	        BOARD_ID
+	      )
+	    values (
+	    	#{id,jdbcType=VARCHAR},
+	    	#{examineDate,jdbcType=TIMESTAMP},
+	    	#{examineInstrumentNo,jdbcType=VARCHAR},
+	    	#{examineUserId,jdbcType=VARCHAR},
+	      	#{boardId, jdbcType=VARCHAR}
+	      )
+	</insert>
+
+	<delete id="deleteExamineRecordByConsignmentId" parameterType="java.lang.String">
+		delete EXAMINE_RECORD a where a.BOARD_ID in (
+			select b.id from BOARD_INFO b where b.CONSIGNMENT_NO in (
+				select c.consignment_no from consignment c where c.id=#{value}
+			)
+		)
+	</delete>
+
+	<delete id="deleteExamineRecordByBoardId" parameterType="java.lang.String">
+		delete EXAMINE_RECORD a where a.BOARD_INFO_ID =#{value}
+	</delete>
+
+</mapper>

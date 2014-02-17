@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+	<package name="sample" namespace="/pages/sample" extends="lims-default">
+
+		<action name="intoAcceptInfo" class="com.lims.action.sample.SampleAcceptAction" method="into">
+			<result name="success" type="dispatcher">/pages/sample/sampleAccept.jsp</result>
+		</action>
+
+		<action name="submitAcceptInfo" class="com.lims.action.sample.SampleAcceptAction" method="submit">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+
+
+		<action name="intoScaneSamples" class="com.lims.action.sample.SampleAcceptAction" method="intoScaneSamples">
+			<result name="success" type="dispatcher">/pages/sample/scaneSamples.jsp</result>
+		</action>
+
+		<action name="intoBatchAcceptSamples" class="com.lims.action.sample.SampleAcceptAction" method="intoBatchAcceptSamples">
+			<result name="success" type="dispatcher">/pages/sample/batchAcceptSamples.jsp</result>
+		</action>
+
+		<action name="submitSampleBatchAccept" class="com.lims.action.sample.SampleAcceptAction" method="submitSampleBatchAccept">
+			<result name="success" type="redirect">/pages/sample/queryConsignmentSamples.action?sampleInfoQuery.consignmentId=${consignment.id}</result>
+		</action>
+
+		<action name="queryConsignmentSamples" class="com.lims.action.sample.SampleQueryAction" method="queryConsignmentSamples">
+			<result name="success" type="dispatcher">/pages/sample/queryConsignmentSamples.jsp</result>
+		</action>
+
+		<action name="updateScanedSampleNo" class="com.lims.action.sample.SampleAcceptAction" method="updateSampleNo">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+
+		<action name="deleteScanedSampleNo" class="com.lims.action.sample.SampleAcceptAction" method="deleteScanedSampleNo">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+
+		<action name="saveScanedSample" class="com.lims.action.sample.SampleAcceptAction" method="saveScanedSample">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+
+		<action name="deleteCKSample" class="com.lims.action.sample.PunchExtractionAction" method="deleteCKSample">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+
+
+		<action name="intoSampleExcelImoprt" class="com.lims.action.sample.SampleAcceptAction" method="intoSampleExcelImoprt">
+			<result name="success" type="dispatcher">/pages/sample/importSampleExcel.jsp</result>
+		</action>
+
+		<action name="submitSampleExcelImport" class="com.lims.action.sample.SampleAcceptAction" method="submitSampleExcelImport">
+			<result name="success" type="dispatcher">/pages/sample/importSampleExcelResult.jsp</result>
+		</action>
+
+		<action name="generateAcceptInfoRecord" class="com.lims.action.sample.SampleAcceptAction" method="generate">
+			<result name="success" type="stream">
+                <!-- 下载文件类型定义 -->
+                <param name="contentType">
+                    application/octet-stream;charset=UTF-8
+                </param>
+                <!-- 下载文件处理方法 -->
+                <param name="contentDisposition">
+                    attachment;filename="${acceptFileName}"
+                </param>
+                <!-- 下载文件输出流定义 -->
+                <param name="inputName">inputStream</param>
+                <param name="bufferSize">4096</param>
+            </result>
+		</action>
+
+		<action name="queryConsignment" class="com.lims.action.sample.ConsignmentAction" method="query">
+			<result name="success" type="dispatcher">/pages/sample/listConsignment.jsp</result>
+		</action>
+
+		<action name="editConsignment" class="com.lims.action.sample.ConsignmentAction" method="editConsignment">
+			<result name="success" type="dispatcher">/pages/sample/editConsignment.jsp</result>
+		</action>
+
+		<action name="deleteConsignment" class="com.lims.action.sample.ConsignmentAction" method="deleteConsignment">
+			<result name="success" type="redirect">/pages/sample/queryConsignment.action</result>
+		</action>
+
+		<action name="submitConsignment" class="com.lims.action.sample.ConsignmentAction" method="submitConsignment">
+			<result name="success" type="redirect">/pages/sample/queryConsignment.action</result>
+		</action>
+
+		<action name="intoPunchExtraction" class="com.lims.action.sample.PunchExtractionAction" method="into">
+			<result name="success" type="dispatcher">/pages/sample/punchExtractionInfo.jsp</result>
+		</action>
+
+		<action name="submitPunchExtraction" class="com.lims.action.sample.PunchExtractionAction" method="submit">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+
+
+		<action name="saveScanedSampleInBoard" class="com.lims.action.sample.PunchExtractionAction" method="saveScanedSampleInBoard">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+		
+		<action name="deleteSampleOfBoardPosition" class="com.lims.action.sample.PunchExtractionAction" method="deleteSampleOfBoardPosition">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+
+		<action name="deleteBoardInfo" class="com.lims.action.sample.PunchExtractionAction" method="deleteBoardInfo">
+			<result name="success" type="redirect">/pages/sample/queryExtractionTasks.action</result>
+		</action>
+
+
+		<action name="checkSmapleExists" class="com.lims.action.sample.PunchExtractionAction" method="checkSmapleExists">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+
+		<action name="intoImportBoardSample" class="com.lims.action.sample.PunchExtractionAction" method="intoImportBoardSample">
+			<result name="success" type="dispatcher">/pages/sample/importBoardSample.jsp</result>
+		</action>
+
+		<action name="submitBoardSampleFileImport" class="com.lims.action.sample.PunchExtractionAction" method="submitBoardSampleFileImport">
+			<result name="success" type="json">
+				<param name="contentType">text/html</param>
+				<param name="root">jsonString</param>
+			</result>
+		</action>
+
+		<action name="generatePunchExtractionRecord" class="com.lims.action.sample.PunchExtractionAction" method="generate">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+
+		<action name="downSyTable" class="com.lims.action.sample.PunchExtractionAction" method="downSyTable">
+			<result name="success" type="stream">
+                <!-- 下载文件类型定义 -->
+                <param name="contentType">
+                    application/octet-stream;charset=UTF-8
+                </param>
+                <!-- 下载文件处理方法 -->
+                <param name="contentDisposition">
+                    attachment;filename="${analysisFileName}"
+                </param>
+                <!-- 下载文件输出流定义 -->
+                <param name="inputName">inputStream</param>
+                <param name="bufferSize">2048</param>
+            </result>
+		</action>
+
+		<action name="zipDownSyTable" class="com.lims.action.sample.PunchExtractionAction" method="zipDownSyTable">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+
+		<action name="queryExtractionTasks" class="com.lims.action.sample.PunchExtractionAction" method="query">
+			<result name="success" type="dispatcher">/pages/sample/listExtractionTasks.jsp</result>
+		</action>
+
+		<action name="viewBoardInfo" class="com.lims.action.sample.PunchExtractionAction" method="view">
+			<result name="success" type="dispatcher">/pages/sample/viewBoardInfo.jsp</result>
+		</action>
+
+
+		<action name="querySamples" class="com.lims.action.sample.SampleQueryAction" method="query">
+			<result name="success" type="dispatcher">/pages/sample/listSamples.jsp</result>
+		</action>
+
+		<action name="deleteSample" class="com.lims.action.sample.SampleQueryAction" method="deleteSample">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+
+		<action name="viewSampleBoard" class="com.lims.action.sample.SampleQueryAction" method="view">
+			<result name="success" type="dispatcher">/pages/sample/viewSampleBoard.jsp</result>
+		</action>
+
+		<action name="importWorkstationFile" class="com.lims.action.sample.PunchExtractionAction" method="importWorkstationFile"></action>
+
+		<action name="checkConsignmentNoExists" class="com.lims.action.sample.PunchExtractionAction" method="checkConsignmentNoExists"></action>
+
+	</package>
+
+</struts>

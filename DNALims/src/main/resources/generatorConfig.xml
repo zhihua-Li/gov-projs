@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration >
+  <context id="context1" >
+    <jdbcConnection driverClass="oracle.jdbc.driver.OracleDriver" connectionURL="jdbc:oracle:thin:@127.0.0.1:1521:orcl" userId="dnalims" password="dnalims" />
+    <javaModelGenerator targetPackage="com.lims.domain" targetProject="DNALims" />
+    <sqlMapGenerator targetPackage="com.lims.dao.mappers" targetProject="DNALims" />
+    <javaClientGenerator targetPackage="com.lims.dao.mappers.client" targetProject="DNALims" type="XMLMAPPER" />
+<!--
+    <table schema="" tableName="ANALYSIS_RECORD"></table>
+    <table schema="" tableName="BOARD_INFO"></table>
+    <table schema="" tableName="BOARD_SAMPLE_MAP"></table>
+    <table schema="" tableName="COMPARE_RESULT"></table>
+    <table schema="" tableName="CONSIGNMENT"></table>
+    <table schema="" tableName="CONSIGN_ORGANIZATION"></table>
+    <table schema="" tableName="GENE_INFO"></table>
+    <table schema="" tableName="LOCUS_INFO"></table>
+    <table schema="" tableName="PCR_RECORD"></table>
+    <table schema="" tableName="POLLUTE_RECORD"></table>
+    <table schema="" tableName="QUALITY_CONTROL_SAMPLE"></table>
+    <table schema="" tableName="REAGENT_KIT"></table>
+     -->
+    <table schema="" tableName="DICT_ITEM"></table>
+  </context>
+</generatorConfiguration>

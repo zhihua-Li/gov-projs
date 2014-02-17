@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+	<package name="file" namespace="/pages/file" extends="lims-default">
+
+		<action name="fileManage" class="com.lims.action.filemanage.FileManageAction" method="query">
+			<result name="success" type="dispatcher">/pages/file/fileRecordList.jsp</result>
+		</action>
+
+		<action name="deleteFileRecord" class="com.lims.action.filemanage.FileManageAction" method="deleteFileRecord">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+
+		<action name="downUploadedFile" class="com.lims.action.filemanage.FileManageAction" method="downUploadedFile">
+			<result name="success" type="stream">
+                <!-- 下载文件类型定义 -->
+                <param name="contentType">
+                    application/octet-stream;charset=UTF-8
+                </param>
+                <!-- 下载文件处理方法 -->
+                <param name="contentDisposition">
+                    attachment;filename="${downloadFileName}"
+                </param>
+                <!-- 下载文件输出流定义 -->
+                <param name="inputName">inputStream</param>
+                <param name="bufferSize">2048</param>
+            </result>
+		</action>
+
+
+		<action name="fileTypeManage" class="com.lims.action.filemanage.FileTypeManageAction" method="query">
+			<result name="success" type="dispatcher">/pages/file/fileTypeList.jsp</result>
+		</action>
+
+		<action name="addFileType" class="com.lims.action.filemanage.FileTypeManageAction" method="add">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+
+		<action name="updateFileType" class="com.lims.action.filemanage.FileTypeManageAction" method="update">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+
+		<action name="deleteFileType" class="com.lims.action.filemanage.FileTypeManageAction" method="delete">
+			<result name="success" type="redirect">/pages/file/fileTypeManage.action</result>
+		</action>
+
+		<action name="intoDownloadFileUploader" class="com.lims.action.filemanage.FileTypeManageAction" method="intoDownloadFileUploader">
+			<result name="success" type="dispatcher">/pages/file/downloadFileUploader.jsp</result>
+		</action>
+
+		<action name="downloadFileUploader" class="com.lims.action.filemanage.FileTypeManageAction" method="downloadFileUploader">
+			<result name="success" type="stream">
+                <!-- 下载文件类型定义 -->
+                <param name="contentType">
+                    application/octet-stream;charset=UTF-8
+                </param>
+                <!-- 下载文件处理方法 -->
+                <param name="contentDisposition">
+                    attachment;filename="${downloadFileName}"
+                </param>
+                <!-- 下载文件输出流定义 -->
+                <param name="inputName">inputStream</param>
+                <param name="bufferSize">2048</param>
+            </result>
+		</action>
+
+		<!--
+			<action name="downUploadedFile" class="com.lims.action.filemanage.FileManageAction" method="downUploadedFile">
+				<result name="success" type="json">
+					<param name="root">jsonData</param>
+				</result>
+			</action>
+		 -->
+
+	</package>
+
+</struts>

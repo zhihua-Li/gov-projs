@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ReagentKitMapper">
+
+	<select id="findReagentKitById" parameterType="String" resultType="ReagentKit">
+		select
+			ID as id,
+			REAGENT_NAME as reagentName,
+			REAGENT_PRODUCER as reagentProducer,
+			REAGENT_DESC as reagentDesc,
+			REAGENT_VERSION as reagentVersion,
+			LOCUS_ORDER as locusOrder,
+			CREATE_USER as createUser,
+			CREATE_DATE as createDate,
+    		UPDATE_USER as updateUser,
+    		UPDATE_DATE as updateDate
+    	from REAGENT_KIT
+    	where ID=#{value}
+	</select>
+
+
+	<select id="findReagentKitList" parameterType="ReagentKit" resultType="ReagentKit">
+		select
+			ID as id,
+			REAGENT_NAME as reagentName,
+			REAGENT_PRODUCER as reagentProducer,
+			REAGENT_DESC as reagentDesc,
+			REAGENT_VERSION as reagentVersion,
+			LOCUS_ORDER as locusOrder,
+			CREATE_USER as createUser,
+			CREATE_DATE as createDate,
+    		UPDATE_USER as updateUser,
+    		UPDATE_DATE as updateDate
+    	from REAGENT_KIT
+    	<where>
+    		<if test="id != null">
+    			ID=#{id, jdbcType=VARCHAR}
+    		</if>
+    		<if test="reagentName != null">
+    			AND REAGENT_NAME=#{reagentName, jdbcType=VARCHAR}
+    		</if>
+    		<if test="reagentProducer != null">
+    			AND REAGENT_PRODUCER=#{reagentProducer, jdbcType=VARCHAR}
+    		</if>
+    	</where>
+	</select>
+
+	<select id="finalAllReagentKitList" resultType="ReagentKit">
+		select
+			ID as id,
+			REAGENT_NAME as reagentName,
+			REAGENT_PRODUCER as reagentProducer,
+			REAGENT_DESC as reagentDesc,
+			REAGENT_VERSION as reagentVersion,
+			LOCUS_ORDER as locusOrder,
+			CREATE_USER as createUser,
+			CREATE_DATE as createDate,
+    		UPDATE_USER as updateUser,
+    		UPDATE_DATE as updateDate
+    	from REAGENT_KIT
+	</select>
+
+	<insert id="insertReagentKit" parameterType="LocusInfo">
+	    insert into REAGENT_KIT (
+	    	ID,
+			REAGENT_NAME,
+			REAGENT_PRODUCER,
+			REAGENT_DESC,
+			REAGENT_VERSION,
+			LOCUS_ORDER,
+			CREATE_USER,
+			CREATE_DATE
+	    ) values (
+	    	#{id,jdbcType=VARCHAR},
+	    	#{reagentName,jdbcType=VARCHAR},
+	    	#{reagentProducer,jdbcType=VARCHAR},
+	    	#{reagentDesc,jdbcType=VARCHAR},
+	    	#{reagentVersion, jdbcType=VARCHAR},
+	      	#{locusOrder,jdbcType=VARCHAR},
+	      	#{createUser,jdbcType=VARCHAR},
+	      	#{createDate,jdbcType=TIMESTAMP}
+	    )
+  </insert>
+
+  <update id="updateReagentKit" parameterType="LocusInfo">
+    update REAGENT_KIT
+    set REAGENT_NAME = #{reagentName,jdbcType=VARCHAR},
+      REAGENT_PRODUCER = #{reagentProducer,jdbcType=VARCHAR},
+      REAGENT_DESC = #{reagentDesc,jdbcType=VARCHAR},
+      REAGENT_VERSION = #{reagentVersion,jdbcType=VARCHAR},
+      LOCUS_ORDER = #{locusOrder,jdbcType=VARCHAR},
+      UPDATE_DATE = #{updateDate,jdbcType=TIMESTAMP},
+      UPDATE_USER = #{updateUser,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <delete id="deleteReagentKitById" parameterType="java.lang.String">
+  	delete REAGENT_KIT t where t.ID=#{value}
+  </delete>
+
+</mapper>

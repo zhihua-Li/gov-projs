@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SampleSourceGeneMapper">
+
+
+	<select id="findSampleSourceGeneById" parameterType="String"
+		resultType="SampleSourceGeneView">
+		select
+				ssg.ID as id,
+				ssg.SAMPLE_ID as sampleId,
+				ssg.BOARD_ID as boardId,
+				ssg.GENE_TYPE as geneType,
+				ssg.REAGENT_KIT as reagentKitId,
+				ssg.GENOTYPE_INFO as genotypeInfo,
+				ssg.REVIEW_STATUS as reviewStatus,
+				ssg.REVIEW_DATE as reviewDate,
+				ssg.REVIEW_USER as reviewUser,
+				ssg.REVIEW_DESC as reviewDesc,
+				ssg.ALIGN_DB_FLAG as alignDbFlag,
+				ssg.CREATE_DATE as createDate,
+				ssg.CREATE_USER as createUser,
+				ssg.UPDATE_DATE as updateDate,
+				ssg.UPDATE_USER as updateUser,
+				ssg.REMARK as remark,
+				b.CONSIGNMENT_NO as consignmentNo,
+				s.SAMPLE_NO as sampleNo,
+				c.ORGANIZATION_ID as organizationId,
+				c.ORGANIZATION_SUB_NAME as organizationSubName,
+				c.CONSIGN_DATE as consignDate,
+				co.ORGANIZATION_NAME as organizationName,
+				rsdi.DICT_VALUE as reviewStatusName,
+				etdi.DICT_VALUE as examineTypeName
+			from SAMPLE_SOURCE_GENE ssg,
+				BOARD_INFO b,
+				SAMPLE_INFO s,
+				CONSIGNMENT c,
+				CONSIGN_ORGANIZATION co,
+				(select DICT_KEY, DICT_VALUE from DICT_ITEM where dict_info_type='REVIEW_STATUS') rsdi,
+				(select DICT_KEY, DICT_VALUE from DICT_ITEM where dict_info_type='EXAMINE_TYPE') etdi
+			where ssg.BOARD_ID=b.ID
+				and ssg.SAMPLE_ID=s.ID
+				and b.CONSIGNMENT_NO=c.CONSIGNMENT_NO
+				and c.ORGANIZATION_ID=co.ID(+)
+				and ssg.REVIEW_STATUS=rsdi.DICT_KEY(+)
+				and b.EXAMINE_TYPE=etdi.DICT_KEY(+)
+				and ssg.ID=#{value}
+	</select>
+
+	<select id="findSampleSourceGeneViewList" parameterType="SampleSourceGeneQuery"
+		resultType="SampleSourceGeneView">
+		<if test="endRowNum != 0">
+			select * from (
+				select t.*, rownum rn from (
+		</if>
+
+			select
+				ssg.ID as id,
+				ssg.SAMPLE_ID as sampleId,
+				ssg.BOARD_ID as boardId,
+				ssg.GENE_TYPE as geneType,
+				ssg.REAGENT_KIT as reagentKitId,
+				ssg.GENOTYPE_INFO as genotypeInfo,
+				ssg.REVIEW_STATUS as reviewStatus,
+				ssg.REVIEW_DATE as reviewDate,
+				ssg.REVIEW_USER as reviewUser,
+				ssg.REVIEW_DESC as reviewDesc,
+				ssg.ALIGN_DB_FLAG as alignDbFlag,
+				ssg.CREATE_DATE as createDate,
+				ssg.CREATE_USER as createUser,
+				ssg.UPDATE_DATE as updateDate,
+				ssg.UPDATE_USER as updateUser,
+				ssg.REMARK as remark,
+				b.CONSIGNMENT_NO as consignmentNo,
+				s.SAMPLE_NO as sampleNo,
+				c.ORGANIZATION_ID as organizationId,
+				c.ORGANIZATION_SUB_NAME as organizationSubName,
+				c.CONSIGN_DATE as consignDate,
+				co.ORGANIZATION_NAME as organizationName,
+				rsdi.DICT_VALUE as reviewStatusName,
+				etdi.DICT_VALUE as examineTypeName,
+				s.ACCEPT_STATUS as acceptStatus,
+				s.ACCEPT_DATE as acceptDate,
+				su.FULL_NAME as acceptUserName
+			from SAMPLE_SOURCE_GENE ssg,
+				BOARD_INFO b,
+				SAMPLE_INFO s,
+				CONSIGNMENT c,
+				CONSIGN_ORGANIZATION co,
+				(select DICT_KEY, DICT_VALUE from DICT_ITEM where dict_info_type='REVIEW_STATUS') rsdi,
+				(select DICT_KEY, DICT_VALUE from DICT_ITEM where dict_info_type='EXAMINE_TYPE') etdi,
+				sys_user su
+			where ssg.BOARD_ID=b.ID
+				and ssg.SAMPLE_ID=s.ID
+				and b.CONSIGNMENT_NO=c.CONSIGNMENT_NO
+				and c.ORGANIZATION_ID=co.ID(+)
+				and ssg.REVIEW_STATUS=rsdi.DICT_KEY(+)
+				and b.EXAMINE_TYPE=etdi.DICT_KEY(+)
+				and s.ACCEPT_USER=su.ID(+)
+			<if test="boardId != null">
+				and ssg.BOARD_ID=#{boardId}
+			</if>
+			<if test="consignmentNo != null">
+				and b.CONSIGNMENT_NO=#{consignmentNo}
+			</if>
+			<if test="boardNo != null">
+				and b.BOARD_NO=#{boardNo}
+			</if>
+			<if test="sampleNo != null">
+				and s.SAMPLE_NO=#{sampleNo}
+			</if>
+			<if test="reviewStatus != null">
+				and ssg.REVIEW_STATUS=#{reviewStatus}
+			</if>
+			<if test="examineType != null">
+				and b.EXAMINE_TYPE=#{examineType}
+			</if>
+			<if test="organizationId != null">
+				and c.ORGANIZATION_ID=#{organizationId}
+			</if>
+			<if test="consignDateStart != null">
+				<![CDATA[	and c.CONSIGN_DATE>=#{consignDateStart, jdbcType=TIMESTAMP}	]]>
+			</if>
+			<if test="consignDateEnd != null">
+				<![CDATA[	and c.CONSIGN_DATE<=#{consignDateEnd, jdbcType=TIMESTAMP}	]]>
+			</if>
+
+			order by ssg.REVIEW_STATUS
+
+		<if test="endRowNum != 0">
+			) t
+			<![CDATA[
+				where rownum <= #{endRowNum}) where rn >= #{startRowNum}
+			]]>
+		</if>
+	</select>
+
+	<select id="findSampleSourceGeneViewCount" parameterType="SampleSourceGeneQuery"
+		resultType="int">
+		select count(ssg.ID)
+		from SAMPLE_SOURCE_GENE ssg,
+			BOARD_INFO b,
+			SAMPLE_INFO s,
+			CONSIGNMENT c
+		where ssg.BOARD_ID=b.ID and ssg.SAMPLE_ID=s.ID and b.CONSIGNMENT_NO=c.CONSIGNMENT_NO
+		<if test="boardId != null">
+				and ssg.BOARD_ID=#{boardId}
+			</if>
+		<if test="consignmentNo != null">
+			and b.CONSIGNMENT_NO=#{consignmentNo}
+		</if>
+		<if test="boardNo != null">
+			and b.BOARD_NO=#{boardNo}
+		</if>
+		<if test="sampleNo != null">
+			and s.SAMPLE_NO=#{sampleNo}
+		</if>
+		<if test="reviewStatus != null">
+			and ssg.REVIEW_STATUS=#{reviewStatus}
+		</if>
+		<if test="examineType != null">
+			and b.EXAMINE_TYPE=#{examineType}
+		</if>
+		<if test="organizationId != null">
+			and c.ORGANIZATION_ID=#{organizationId}
+		</if>
+		<if test="consignDateStart != null">
+			<![CDATA[	and c.CONSIGN_DATE>=#{consignDateStart, jdbcType=TIMESTAMP}	]]>
+		</if>
+		<if test="consignDateEnd != null">
+			<![CDATA[	and c.CONSIGN_DATE<=#{consignDateEnd, jdbcType=TIMESTAMP}	]]>
+		</if>
+	</select>
+
+	<select id="findSampleSourceGeneByIdList" parameterType="ArrayList" resultType="SampleSourceGeneView">
+		select
+				ssg.ID as id,
+				ssg.SAMPLE_ID as sampleId,
+				ssg.BOARD_ID as boardId,
+				ssg.GENE_TYPE as geneType,
+				ssg.REAGENT_KIT as reagentKitId,
+				ssg.GENOTYPE_INFO as genotypeInfo,
+				ssg.REVIEW_STATUS as reviewStatus,
+				ssg.REVIEW_DATE as reviewDate,
+				ssg.REVIEW_USER as reviewUser,
+				ssg.REVIEW_DESC as reviewDesc,
+				ssg.ALIGN_DB_FLAG as alignDbFlag,
+				ssg.CREATE_DATE as createDate,
+				ssg.CREATE_USER as createUser,
+				ssg.UPDATE_DATE as updateDate,
+				ssg.UPDATE_USER as updateUser,
+				ssg.REMARK as remark
+		from SAMPLE_SOURCE_GENE ssg
+		where ssg.ID in
+		<foreach collection="list" index="index" item="idVal" open="(" separator="," close=")">
+			#{idVal}
+		</foreach>
+	</select>
+	
+	<select id="findSampleSourceGeneBySampleNoList" parameterType="ArrayList" resultType="SampleSourceGeneView">
+		select
+				ssg.ID as id,
+				ssg.SAMPLE_ID as sampleId,
+				ssg.BOARD_ID as boardId,
+				ssg.GENE_TYPE as geneType,
+				ssg.REAGENT_KIT as reagentKitId,
+				ssg.GENOTYPE_INFO as genotypeInfo,
+				ssg.REVIEW_STATUS as reviewStatus,
+				ssg.REVIEW_DATE as reviewDate,
+				ssg.REVIEW_USER as reviewUser,
+				ssg.REVIEW_DESC as reviewDesc,
+				ssg.ALIGN_DB_FLAG as alignDbFlag,
+				ssg.CREATE_DATE as createDate,
+				ssg.CREATE_USER as createUser,
+				ssg.UPDATE_DATE as updateDate,
+				ssg.UPDATE_USER as updateUser,
+				ssg.REMARK as remark,
+				bi.BOARD_NO as boardNo,
+				si.SAMPLE_NO as sampleNo
+		from SAMPLE_SOURCE_GENE ssg 
+			left join BOARD_INFO bi on ssg.BOARD_ID=bi.ID
+			left join SAMPLE_INFO si on ssg.SAMPLE_ID=si.ID
+		where ssg.SAMPLE_ID in 
+		(
+			select ID from SAMPLE_INFO where SAMPLE_NO IN 
+			<foreach collection="list" index="index" item="sampleNoVal" open="(" separator="," close=")">
+				#{sampleNoVal}
+			</foreach>
+		)
+	</select>
+
+  <select id="insertSampleSourceGeneList" parameterType="ArrayList">
+	    insert into SAMPLE_SOURCE_GENE (
+	      ID,
+		  SAMPLE_ID,
+		  BOARD_ID,
+		  GENE_TYPE,
+		  REAGENT_KIT,
+		  GENOTYPE_INFO,
+		  REVIEW_STATUS,
+		  REVIEW_DATE,
+		  REVIEW_USER,
+		  REVIEW_DESC,
+		  ALIGN_DB_FLAG,
+		  CREATE_DATE,
+		  CREATE_USER,
+		  REMARK
+	  	)
+
+	    <foreach collection="list" item="sampleSourceGene" index="index" separator="union all">
+			select
+				#{sampleSourceGene.id, jdbcType=VARCHAR},
+				#{sampleSourceGene.sampleId, jdbcType=VARCHAR},
+				#{sampleSourceGene.boardId, jdbcType=VARCHAR},
+				#{sampleSourceGene.geneType, jdbcType=VARCHAR},
+				#{sampleSourceGene.reagentKitId, jdbcType=VARCHAR},
+				#{sampleSourceGene.genotypeInfo, jdbcType=VARCHAR},
+				#{sampleSourceGene.reviewStatus, jdbcType=VARCHAR},
+				#{sampleSourceGene.reviewDate, jdbcType=TIMESTAMP},
+				#{sampleSourceGene.reviewUser, jdbcType=VARCHAR},
+				#{sampleSourceGene.reviewDesc, jdbcType=VARCHAR},
+				#{sampleSourceGene.alignDbFlag, jdbcType=VARCHAR},
+				#{sampleSourceGene.createDate, jdbcType=TIMESTAMP},
+				#{sampleSourceGene.createUser, jdbcType=VARCHAR},
+				#{sampleSourceGene.remark, jdbcType=VARCHAR}
+			from dual
+		</foreach>
+  </select>
+
+  <insert id="insertSampleSourceGene" parameterType="SampleSourceGene">
+  	insert into SAMPLE_SOURCE_GENE (
+	      ID,
+		  SAMPLE_ID,
+		  BOARD_ID,
+		  GENE_TYPE,
+		  REAGENT_KIT,
+		  GENOTYPE_INFO,
+		  REVIEW_STATUS,
+		  REVIEW_DATE,
+		  REVIEW_USER,
+		  REVIEW_DESC,
+		  ALIGN_DB_FLAG,
+		  CREATE_DATE,
+		  CREATE_USER,
+		  REMARK
+	) values (
+		#{id, jdbcType=VARCHAR},
+		#{sampleId, jdbcType=VARCHAR},
+		#{boardId, jdbcType=VARCHAR},
+		#{geneType, jdbcType=VARCHAR},
+		#{reagentKitId, jdbcType=VARCHAR},
+		#{genotypeInfo, jdbcType=VARCHAR},
+		#{reviewStatus, jdbcType=VARCHAR},
+		#{reviewDate, jdbcType=TIMESTAMP},
+		#{reviewUser, jdbcType=VARCHAR},
+		#{reviewDesc, jdbcType=VARCHAR},
+		#{alignDbFlag, jdbcType=VARCHAR},
+		#{createDate, jdbcType=TIMESTAMP},
+		#{createUser, jdbcType=VARCHAR},
+		#{remark, jdbcType=VARCHAR}
+	)
+  </insert>
+
+  <update id="updateSampleSourceGene" parameterType="SampleSourceGene">
+    update SAMPLE_SOURCE_GENE
+    set SAMPLE_ID = #{sampleId,jdbcType=VARCHAR},
+    	BOARD_ID = #{boardId, jdbcType=VARCHAR},
+      	GENE_TYPE = #{geneType,jdbcType=VARCHAR},
+      	REAGENT_KIT = #{reagentKitId,jdbcType=VARCHAR},
+      	GENOTYPE_INFO = #{genotypeInfo,jdbcType=VARCHAR},
+      	REVIEW_STATUS = #{reviewStatus,jdbcType=VARCHAR},
+      	REVIEW_DATE = #{reviewDate,jdbcType=TIMESTAMP},
+      	REVIEW_USER = #{reviewUser,jdbcType=VARCHAR},
+      	REVIEW_DESC = #{reviewDesc, jdbcType=VARCHAR},
+      	ALIGN_DB_FLAG = #{alignDbFlag,jdbcType=CHAR},
+      	UPDATE_DATE = #{updateDate,jdbcType=TIMESTAMP},
+      	UPDATE_USER = #{updateUser,jdbcType=VARCHAR},
+      	REMARK = #{remark,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateGeneReviewStatusBatch" parameterType="Map">
+	update SAMPLE_SOURCE_GENE
+	set REVIEW_STATUS=#{reviewStatus},
+		REVIEW_DATE=#{reviewDate},
+		REVIEW_USER=#{reviewUser},
+		UPDATE_DATE=#{updateDate},
+		UPDATE_USER=#{updateUser}
+		<if test="reviewDesc != null">
+			, REVIEW_DESC=#{reviewDesc}
+		</if>
+	where ID in
+	<foreach collection="geneIdList" index="index" item="sourceGene" open="(" separator="," close=")">
+		#{sourceGene}
+	</foreach>
+  </update>
+
+  <update id="updateGeneInstoreFlagBatch" parameterType="Map">
+  	update SAMPLE_SOURCE_GENE
+	set ALIGN_DB_FLAG=#{alignDbFlag},
+		UPDATE_DATE=#{updateDate},
+		UPDATE_USER=#{updateUser}
+	where ID in
+	<foreach collection="sourceGeneIdList" index="index" item="sourceGene" open="(" separator="," close=")">
+		#{sourceGene}
+	</foreach>
+  </update>
+
+	<delete id="deleteSampleSourceGeneByConsignmentId" parameterType="java.lang.String">
+		delete SAMPLE_SOURCE_GENE s where s.SAMPLE_ID in (
+			select sa.id from SAMPLE_INFO sa where sa.CONSIGNMENT_ID=#{value}
+		)
+	</delete>
+
+	<delete id="deleteSampleSourceGeneByBoardId" parameterType="java.lang.String">
+		delete SAMPLE_SOURCE_GENE s where s.SAMPLE_ID in (
+			select bsm.sample_id from board_sample_map bsm where bsm.board_id=#{value}
+		)
+	</delete>
+
+	<delete id="deleteSampleSourceGeneBySampleId" parameterType="java.lang.String">
+		delete SAMPLE_SOURCE_GENE s where s.SAMPLE_ID=#{value}
+	</delete>
+
+</mapper>

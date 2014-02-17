@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ConsignmentMapper">
+
+  <select id="findConsignmentList" parameterType="ConsignmentQuery"
+  	resultType="ConsignmentView">
+  	<if test="endRowNum != 0">
+		select * from (
+			select t1.*, rownum rn from (
+	</if>
+	select c.* from (
+	    select
+	    	t.ID as id,
+	    	t.CONSIGNMENT_NO as consignmentNo,
+	    	t.ORGANIZATION_ID as organizationId,
+	    	t.ORGANIZATION_SUB_NAME as organizationSubName,
+	    	t.CONSIGN_DATE as consignDate,
+	    	t.CONSIGNMENTOR as consignmentor,
+	    	t.PHONENUM as phonenum,
+	    	t.CONSIGN_METHOD consignMethod,
+	    	t.CONSIGN_SAMPLE_TYPE as consignSampleType,
+	    	t.CONSIGN_SAMPLE_COUNT as consignSampleCount,
+	    	t.CONSIGN_BLOOD_COUNT as consignBloodCount,
+	    	t.CONSIGN_SALIVA_COUNT as consignSalivaCount,
+	    	t.CHECK_CONTENT_TYPE as checkContentType,
+	    	t.SAMPLE_CARRIER as sampleCarrier,
+	    	t.SAMPLE_CARRIER_DESC as sampleCarrierDesc,
+	    	t.AGREEMENT_AMOUNT as agreementAmount,
+	    	t.EXPENSE_BALANCE_DATE as expenseBalanceDate,
+	    	t.DATA_UPLOAD_DATE as dataUploadDate,
+	    	t.SAMPLE_REBACK_DATE as sampleRebackDate,
+	    	t.REMARK as remark,
+	    	t.CREATE_DATE as createDate,
+	    	t.CREATE_USER as createUser,
+	    	t.UPDATE_DATE as updateDate,
+	    	t.UPDATE_USER as updateUser,
+	    	co.ORGANIZATION_NAME as organizationName,
+	    	su.FULL_NAME as createUserName,
+	    	(select count(ID) from SAMPLE_INFO WHERE CONSIGNMENT_ID=t.ID) as sampleCount,
+	    	(select count(ID) from SAMPLE_INFO WHERE CONSIGNMENT_ID=t.ID and ACCEPT_STATUS='1') as acceptedSampleCount
+	    from CONSIGNMENT t
+	    left join CONSIGN_ORGANIZATION co on t.ORGANIZATION_ID=co.ID
+	    left join SYS_USER su on t.CREATE_USER=su.ID
+	    <where>
+	    	<if test="id != null">
+	    		t.ID=#{id}
+	    	</if>
+	    	<if test="consignmentNo != null">
+	    		and t.CONSIGNMENT_NO=#{consignmentNo}
+	    	</if>
+	    	<if test="organizationId != null">
+	    		and t.ORGANIZATION_ID=#{organizationId}
+	    	</if>
+	    	<if test="consignDateStart != null">
+	    		<![CDATA[ and t.CONSIGN_DATE >= #{consignDateStart}	]]>
+	    	</if>
+	    	<if test="consignDateEnd != null">
+	    		<![CDATA[ and t.CONSIGN_DATE <= #{consignDateEnd}	]]>
+	    	</if>
+	    	<if test="createUser != null">
+	    		and t.CREATE_USER=#{createUser}
+	    	</if>
+	    	<if test="createDateStart != null">
+	    		<![CDATA[ and t.CREATE_DATE >= #{createDateStart}	]]>
+	    	</if>
+	    	<if test="createDateEnd != null">
+	    		<![CDATA[ and t.CREATE_DATE <= #{createDateEnd}	]]>
+	    	</if>
+	    </where>
+	) c order by ${sortColumn} ${sortOrder}
+
+    <if test="endRowNum != 0">
+		) t1
+		<![CDATA[
+			where rownum <= #{endRowNum}) where rn >= #{startRowNum}
+		]]>
+	</if>
+  </select>
+
+  <select id="findConsignmentListCount" parameterType="ConsignmentQuery"
+  	resultType="int">
+    select count(t.ID)
+    from CONSIGNMENT t
+    <where>
+    	<if test="id != null">
+    		t.ID=#{id}
+    	</if>
+    	<if test="consignmentNo != null">
+    		and t.CONSIGNMENT_NO=#{consignmentNo}
+    	</if>
+    	<if test="organizationId != null">
+    		and t.ORGANIZATION_ID=#{organizationId}
+    	</if>
+    	<if test="consignDateStart != null">
+    		<![CDATA[ and t.CONSIGN_DATE >= #{consignDateStart}	]]>
+    	</if>
+    	<if test="consignDateEnd != null">
+    		<![CDATA[ and t.CONSIGN_DATE <= #{consignDateEnd}	]]>
+    	</if>
+    	<if test="createUser != null">
+    		and t.CREATE_USER=#{createUser}
+    	</if>
+    	<if test="createDateStart != null">
+    		<![CDATA[ and t.CREATE_DATE >= #{createDateStart}	]]>
+    	</if>
+    	<if test="createDateEnd != null">
+    		<![CDATA[ and t.CREATE_DATE <= #{createDateEnd}	]]>
+    	</if>
+    </where>
+  </select>
+
+
+  <select id="findConsignmentViewById" parameterType="java.lang.String"
+  	resultType="ConsignmentView">
+  	select
+    	t.ID as id,
+    	t.CONSIGNMENT_NO as consignmentNo,
+    	t.ORGANIZATION_ID as organizationId,
+    	t.ORGANIZATION_SUB_NAME as organizationSubName,
+    	t.CONSIGN_DATE as consignDate,
+    	t.CONSIGNMENTOR as consignmentor,
+    	t.PHONENUM as phonenum,
+    	t.CONSIGN_METHOD consignMethod,
+    	t.CONSIGN_SAMPLE_TYPE as consignSampleType,
+    	t.CONSIGN_SAMPLE_COUNT as consignSampleCount,
+    	t.CONSIGN_BLOOD_COUNT as consignBloodCount,
+    	t.CONSIGN_SALIVA_COUNT as consignSalivaCount,
+    	t.CHECK_CONTENT_TYPE as checkContentType,
+    	t.SAMPLE_CARRIER as sampleCarrier,
+    	t.SAMPLE_CARRIER_DESC as sampleCarrierDesc,
+    	t.AGREEMENT_AMOUNT as agreementAmount,
+    	t.EXPENSE_BALANCE_DATE as expenseBalanceDate,
+    	t.DATA_UPLOAD_DATE as dataUploadDate,
+    	t.SAMPLE_REBACK_DATE as sampleRebackDate,
+    	t.REMARK as remark,
+    	t.CREATE_DATE as createDate,
+    	t.CREATE_USER as createUser,
+    	t.UPDATE_DATE as updateDate,
+    	t.UPDATE_USER as updateUser,
+    	co.ORGANIZATION_NAME as organizationName,
+    	su.FULL_NAME as createUserName,
+    	(select count(ID) from SAMPLE_INFO WHERE CONSIGNMENT_ID=t.ID) as sampleCount
+    from CONSIGNMENT t
+    left join CONSIGN_ORGANIZATION co on t.ORGANIZATION_ID=co.ID
+    left join SYS_USER su on t.CREATE_USER=su.ID
+    where t.ID=#{value}
+  </select>
+
+
+  <select id="findConsignmentById" parameterType="java.lang.String"
+  	resultType="Consignment">
+  	select
+    	t.ID as id,
+    	t.CONSIGNMENT_NO as consignmentNo,
+    	t.ORGANIZATION_ID as organizationId,
+    	t.ORGANIZATION_SUB_NAME as organizationSubName,
+    	t.CONSIGN_DATE as consignDate,
+    	t.CONSIGNMENTOR as consignmentor,
+    	t.PHONENUM as phonenum,
+    	t.CONSIGN_METHOD consignMethod,
+    	t.CONSIGN_SAMPLE_TYPE as consignSampleType,
+    	t.CONSIGN_SAMPLE_COUNT as consignSampleCount,
+    	t.CONSIGN_BLOOD_COUNT as consignBloodCount,
+    	t.CONSIGN_SALIVA_COUNT as consignSalivaCount,
+    	t.CHECK_CONTENT_TYPE as checkContentType,
+    	t.SAMPLE_CARRIER as sampleCarrier,
+    	t.SAMPLE_CARRIER_DESC as sampleCarrierDesc,
+    	t.AGREEMENT_AMOUNT as agreementAmount,
+    	t.EXPENSE_BALANCE_DATE as expenseBalanceDate,
+    	t.DATA_UPLOAD_DATE as dataUploadDate,
+    	t.SAMPLE_REBACK_DATE as sampleRebackDate,
+    	t.REMARK as remark,
+    	t.CREATE_DATE as createDate,
+    	t.CREATE_USER as createUser,
+    	t.UPDATE_DATE as updateDate,
+    	t.UPDATE_USER as updateUser
+    from CONSIGNMENT t
+    where t.ID=#{value}
+  </select>
+
+
+
+  <select id="findConsignmentByNo" parameterType="java.lang.String"
+  	resultType="Consignment">
+  	select
+    	t.ID as id,
+    	t.CONSIGNMENT_NO as consignmentNo,
+    	t.ORGANIZATION_ID as organizationId,
+    	t.ORGANIZATION_SUB_NAME as organizationSubName,
+    	t.CONSIGN_DATE as consignDate,
+    	t.CONSIGNMENTOR as consignmentor,
+    	t.PHONENUM as phonenum,
+    	t.CONSIGN_METHOD consignMethod,
+    	t.CONSIGN_SAMPLE_TYPE as consignSampleType,
+    	t.CONSIGN_SAMPLE_COUNT as consignSampleCount,
+    	t.CONSIGN_BLOOD_COUNT as consignBloodCount,
+    	t.CONSIGN_SALIVA_COUNT as consignSalivaCount,
+    	t.CHECK_CONTENT_TYPE as checkContentType,
+    	t.SAMPLE_CARRIER as sampleCarrier,
+    	t.SAMPLE_CARRIER_DESC as sampleCarrierDesc,
+    	t.AGREEMENT_AMOUNT as agreementAmount,
+    	t.EXPENSE_BALANCE_DATE as expenseBalanceDate,
+    	t.DATA_UPLOAD_DATE as dataUploadDate,
+    	t.SAMPLE_REBACK_DATE as sampleRebackDate,
+    	t.REMARK as remark,
+    	t.CREATE_DATE as createDate,
+    	t.CREATE_USER as createUser,
+    	t.UPDATE_DATE as updateDate,
+    	t.UPDATE_USER as updateUser,
+    	c.ORGANIZATION_NAME as organizationName
+    from CONSIGNMENT t
+    left join CONSIGN_ORGANIZATION c on t.ORGANIZATION_ID=c.ID
+    where t.CONSIGNMENT_NO=#{value}
+  </select>
+
+  <insert id="addConsignment" parameterType="Consignment">
+	insert into CONSIGNMENT (
+			ID, CONSIGNMENT_NO, ORGANIZATION_ID, ORGANIZATION_SUB_NAME,
+    		CONSIGN_DATE, CONSIGNMENTOR, PHONENUM, CONSIGN_METHOD,
+    		CONSIGN_SAMPLE_TYPE, CONSIGN_SAMPLE_COUNT, CONSIGN_BLOOD_COUNT, CONSIGN_SALIVA_COUNT, CHECK_CONTENT_TYPE,
+    		SAMPLE_CARRIER, SAMPLE_CARRIER_DESC, AGREEMENT_AMOUNT, EXPENSE_BALANCE_DATE,
+    		DATA_UPLOAD_DATE, SAMPLE_REBACK_DATE, REMARK, CREATE_DATE,
+    		CREATE_USER, UPDATE_DATE, UPDATE_USER
+		) values (
+			#{id,jdbcType=VARCHAR}, #{consignmentNo,jdbcType=VARCHAR}, #{organizationId,jdbcType=VARCHAR},
+			#{organizationSubName,jdbcType=VARCHAR}, #{consignDate,jdbcType=TIMESTAMP}, #{consignmentor,jdbcType=VARCHAR},
+			#{phonenum,jdbcType=VARCHAR}, #{consignMethod,jdbcType=VARCHAR},
+			#{consignSampleType,jdbcType=VARCHAR}, #{consignSampleCount,jdbcType=VARCHAR},
+			#{consignBloodCount,jdbcType=VARCHAR}, #{consignSalivaCount,jdbcType=VARCHAR},
+			#{checkContentType,jdbcType=VARCHAR}, #{sampleCarrier,jdbcType=CHAR},
+			#{sampleCarrierDesc,jdbcType=VARCHAR}, #{agreementAmount,jdbcType=VARCHAR},
+			#{expenseBalanceDate,jdbcType=VARCHAR}, #{dataUploadDate,jdbcType=TIMESTAMP},
+			#{sampleRebackDate,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR},
+			#{createDate,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR},
+			#{updateDate,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}
+		)
+  </insert>
+
+  <update id="updateConsignment" parameterType="Consignment">
+	update CONSIGNMENT
+		set ORGANIZATION_ID=#{organizationId,jdbcType=VARCHAR},
+			ORGANIZATION_SUB_NAME=#{organizationSubName,jdbcType=VARCHAR},
+    		CONSIGN_DATE=#{consignDate,jdbcType=TIMESTAMP},
+    		CONSIGNMENTOR=#{consignmentor,jdbcType=VARCHAR},
+    		PHONENUM=#{phonenum,jdbcType=VARCHAR},
+    		CONSIGN_METHOD=#{consignMethod,jdbcType=VARCHAR},
+    		CONSIGN_SAMPLE_TYPE=#{consignSampleType,jdbcType=VARCHAR},
+    		CONSIGN_SAMPLE_COUNT=#{consignSampleCount,jdbcType=VARCHAR},
+    		CONSIGN_BLOOD_COUNT=#{consignBloodCount,jdbcType=VARCHAR},
+    		CONSIGN_SALIVA_COUNT=#{consignSalivaCount,jdbcType=VARCHAR},
+    		CHECK_CONTENT_TYPE=#{checkContentType,jdbcType=VARCHAR},
+    		SAMPLE_CARRIER=#{sampleCarrier,jdbcType=CHAR},
+    		SAMPLE_CARRIER_DESC=#{sampleCarrierDesc,jdbcType=VARCHAR},
+    		AGREEMENT_AMOUNT=#{agreementAmount,jdbcType=VARCHAR},
+    		EXPENSE_BALANCE_DATE=#{expenseBalanceDate,jdbcType=VARCHAR},
+    		DATA_UPLOAD_DATE=#{dataUploadDate,jdbcType=TIMESTAMP},
+    		SAMPLE_REBACK_DATE=#{sampleRebackDate,jdbcType=TIMESTAMP},
+    		REMARK=#{remark,jdbcType=VARCHAR},
+    		UPDATE_DATE=#{updateDate,jdbcType=TIMESTAMP},
+    		UPDATE_USER=#{updateUser,jdbcType=VARCHAR}
+		where ID=#{id}
+  </update>
+
+
+  <delete id="deleteConsignmentById" parameterType="java.lang.String">
+  	delete CONSIGNMENT WHERE ID=#{value}
+  </delete>
+
+</mapper>

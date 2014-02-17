@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="CompareQueueMapper">
+
+	<select id="findCompareQueueList" parameterType="Map"
+		resultType="CompareQueue">
+		<![CDATA[
+		select * from (
+  		  select rownum as rn,
+			t.ID as id,
+			t.GENE_ID as geneId,
+			t.TASK_STATUS as taskStatus,
+			t.CREATE_DATE as createDate,
+			t.CREATE_USER as createUser,
+			t.UPDATE_DATE as updateDate,
+			t.UPDATE_USER as updateUser,
+			g.SAMPLE_ID as sampleId,
+			g.GENOTYPE_INFO as genetypeInfo
+			from COMPARE_QUEUE t, GENE_INFO g
+			where t.GENE_ID=g.ID and TASK_STATUS = #{taskStatus}
+		) t
+		]]>
+		<if test="taskSize != null">
+			<![CDATA[
+				where t.rn > 0 and t.rn <= #{taskSize}
+			]]>
+		</if>
+	</select>
+
+	<select id="insertCompareQueueBatch" parameterType="ArrayList">
+	    insert into COMPARE_QUEUE (
+	    	ID,
+	    	GENE_ID,
+	    	TASK_STATUS,
+	      	CREATE_DATE,
+	      	CREATE_USER,
+	      	UPDATE_DATE,
+	      	UPDATE_USER
+	    )
+	    <foreach collection="list" item="compareQueue" index="index" separator="union all">
+			select
+				#{compareQueue.id, jdbcType=VARCHAR},
+				#{compareQueue.geneId, jdbcType=VARCHAR},
+				#{compareQueue.taskStatus, jdbcType=VARCHAR},
+				#{compareQueue.createDate, jdbcType=TIMESTAMP},
+				#{compareQueue.createUser, jdbcType=VARCHAR},
+				#{compareQueue.updateDate, jdbcType=TIMESTAMP},
+				#{compareQueue.updateUser, jdbcType=VARCHAR}
+			from dual
+		</foreach>
+  </select>
+
+	<update id="updateCompareQueue" parameterType="CompareQueue">
+		update COMPARE_QUEUE
+		set
+			TASK_STATUS=#{taskStatus, jdbcType=VARCHAR},
+			UPDATE_DATE=#{updateDate, jdbcType=TIMESTAMP},
+			UPDATE_USER=#{updateUser, jdbcType=VARCHAR}
+		where ID=#{id, jdbcType=VARCHAR}
+	</update>
+
+</mapper>

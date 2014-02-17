@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="SysUserMapper">
+
+	<select id="findSysUser" parameterType="SysUser"
+		resultType="SysUser">
+		<if test="endRowNum != 0">
+			select * from (
+				select t.*, rownum rn from (
+		</if>
+
+			select su.ID as id,
+				su.USER_NAME as userName,
+				su.USER_PASSWORD as userPassword,
+				su.FULL_NAME as fullName,
+				su.ID_CARD_NO as idCardNo,
+				su.EMAIL as email,
+				su.PHONENUM as phonenum,
+				su.FAMILY_ADDRESS as familyAddress,
+				su.CREATE_DATETIME as createDatetime,
+				su.CREATE_USER as createUser,
+				su.REMARK as remark,
+				su.ACTIVE_FLAG as activeFlag,
+				su.UPDATE_DATETIME as updateDatetime,
+				su.UPDATE_USER as updateUser
+			from SYS_USER su
+			<where>
+				<if test="userName != null">
+					su.USER_NAME=#{userName}
+				</if>
+				<if test="userPassword != null">
+					AND su.USER_PASSWORD=#{userPassword}
+				</if>
+				<if test="fullName != null">
+					AND su.FULL_NAME=#{fullName}
+				</if>
+				<if test="idCardNo != null">
+					AND su.ID_CARD_NO=#{idCardNo}
+				</if>
+			</where>
+
+		<if test="endRowNum != 0">
+			) t
+			<![CDATA[
+				where rownum <= #{endRowNum}) where rn >= #{startRowNum}
+			]]>
+		</if>
+
+	</select>
+
+	<select id="findSysUserListCount" parameterType="SysUser"
+		resultType="int">
+		select count(su.ID)
+		from SYS_USER su
+		<where>
+			<if test="userName != null">
+				su.USER_NAME=#{userName}
+			</if>
+			<if test="userPassword != null">
+				AND su.USER_PASSWORD=#{userPassword}
+			</if>
+			<if test="fullName != null">
+				AND su.FULL_NAME=#{fullName}
+			</if>
+			<if test="idCardNo != null">
+				AND su.ID_CARD_NO=#{idCardNo}
+			</if>
+		</where>
+	</select>
+
+	<select id="findSysUserById" parameterType="String"
+		resultType="SysUser">
+		select su.ID as id,
+			su.USER_NAME as userName,
+			su.USER_PASSWORD as userPassword,
+			su.FULL_NAME as fullName,
+			su.ID_CARD_NO as idCardNo,
+			su.EMAIL as email,
+			su.PHONENUM as phonenum,
+			su.FAMILY_ADDRESS as familyAddress,
+			su.CREATE_DATETIME as createDatetime,
+			su.CREATE_USER as createUser,
+			su.REMARK as remark,
+			su.ACTIVE_FLAG as activeFlag,
+			su.UPDATE_DATETIME as updateDatetime,
+			su.UPDATE_USER as updateUser
+		from SYS_USER su
+		where su.ID=#{value}
+	</select>
+
+	<insert id="addSysUser" parameterType="SysUser">
+		insert into SYS_USER (
+			ID, USER_NAME, USER_PASSWORD, FULL_NAME, ID_CARD_NO, EMAIL, PHONENUM, FAMILY_ADDRESS,
+			CREATE_DATETIME, CREATE_USER, REMARK, ACTIVE_FLAG, UPDATE_DATETIME, UPDATE_USER
+		) values (
+			#{id,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{userPassword,jdbcType=VARCHAR},
+			#{fullName,jdbcType=VARCHAR}, #{idCardNo,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR},
+			#{phonenum,jdbcType=VARCHAR}, #{familyAddress,jdbcType=VARCHAR},
+			#{createDatetime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR},
+			#{remark,jdbcType=VARCHAR}, #{activeFlag,jdbcType=CHAR},
+			#{updateDatetime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<update id="updateSysUser" parameterType="SysUser">
+		update SYS_USER t
+		<set>
+			<if test="userName != null">
+				t.USER_NAME=#{userName, jdbcType=VARCHAR},
+			</if>
+
+			<if test="userPassword != null">
+				t.USER_PASSWORD=#{userPassword, jdbcType=VARCHAR},
+			</if>
+
+			<if test="fullName != null">
+				t.FULL_NAME=#{fullName, jdbcType=VARCHAR},
+			</if>
+
+			<if test="idCardNo != null">
+				t.ID_CARD_NO=#{idCardNo, jdbcType=VARCHAR},
+			</if>
+
+			<if test="email != null">
+				t.EMAIL=#{email, jdbcType=VARCHAR},
+			</if>
+
+			<if test="phonenum != null">
+				t.PHONENUM=#{phonenum, jdbcType=VARCHAR},
+			</if>
+
+			<if test="activeFlag != null">
+				t.ACTIVE_FLAG=#{activeFlag, jdbcType=VARCHAR},
+			</if>
+
+			<if test="updateDatetime != null">
+				t.UPDATE_DATETIME=#{updateDatetime, jdbcType=TIMESTAMP},
+			</if>
+
+			<if test="updateUser != null">
+				t.UPDATE_USER=#{updateUser, jdbcType=VARCHAR},
+			</if>
+		</set>
+
+		where t.ID=#{id}
+	</update>
+
+	<update id="updateUserPassword" parameterType="SysUser">
+		update SYS_USER
+		set USER_PASSWORD=#{newPassword, jdbcType=VARCHAR}
+		where ID=#{id, jdbcType=VARCHAR}
+	</update>
+
+
+	<select id="addSysUserRole" parameterType="ArrayList">
+		insert into SYS_USER_ROLE (
+			ID, USER_ID, ROLE_ID)
+		<foreach collection="list" item="sysUserRole" index="index" separator="union all">
+			select #{sysUserRole.id}, #{sysUserRole.userId}, #{sysUserRole.roleId} from dual
+		</foreach>
+	</select>
+
+	<delete id="deleteSysUserRoleByUserId" parameterType="String">
+		delete from SYS_USER_ROLE where USER_ID=#{value}
+	</delete>
+
+	<delete id="deleteSysUserById" parameterType="String">
+		delete from SYS_USER where ID=#{value}
+	</delete>
+
+</mapper>

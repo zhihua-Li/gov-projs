@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+	<package name="login" namespace="/pages" extends="lims-default">
+
+		<action name="intoLogin" class="com.lims.action.LoginAction" method="intoLogin">
+			<result name="success" type="dispatcher">/pages/login.jsp</result>
+		</action>
+
+
+		<action name="submitLogin" class="com.lims.action.LoginAction" method="login">
+			<result name="loginError" type="redirectAction">
+				<param name="actionName">intoLogin.action</param>
+				<param name="errorMessage">${errorMessage}</param>
+				<param name="encode">true</param>
+			</result>
+			<result name="success" type="redirect">/pages/mainFrame.action</result>
+		</action>
+
+		<action name="submitUpdatePassword" class="com.lims.action.LoginAction" method="submitUpdatePassword">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+
+		<action name="mainFrame" class="com.lims.action.main.MainFrameAction" method="intoMainFrame">
+			<result name="success" type="dispatcher">/pages/index.jsp</result>
+		</action>
+
+		<action name="intoFrameContent" class="com.lims.action.main.MainFrameAction" method="intoFrameContent">
+			<result name="success" type="dispatcher">/pages/mainFrameContent.jsp</result>
+		</action>
+
+		<action name="intoMainContent" class="com.lims.action.main.MainFrameAction" method="intoMainContent">
+			<result name="success" type="dispatcher">/pages/mainContent.jsp</result>
+		</action>
+
+		<!--注销用户 -->
+		<action name="logout" class="com.lims.action.LoginAction" method="logout">
+			<result name="success" type="redirect">/pages/intoLogin.action</result>
+		</action>
+
+	</package>
+
+	<package name="system" namespace="/pages/system" extends="lims-default">
+
+		<action name="querySysUser" class="com.lims.action.system.SysUserAction" method="query">
+			<result name="success" type="dispatcher">/pages/system/sysUserList.jsp</result>
+		</action>
+
+		<action name="editSysUser" class="com.lims.action.system.SysUserAction" method="editSysUser">
+			<result name="success" type="dispatcher">/pages/system/editSysUser.jsp</result>
+		</action>
+
+		<action name="submitSysUser" class="com.lims.action.system.SysUserAction" method="submit">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+
+		<action name="deleteSysUser" class="com.lims.action.system.SysUserAction" method="deleteSysUser">
+			<result name="success" type="redirect">/pages/system/querySysUser.action</result>
+		</action>
+
+
+		<action name="querySysRole" class="com.lims.action.system.SysRoleAction" method="query">
+			<result name="success" type="dispatcher">/pages/system/sysRoleList.jsp</result>
+		</action>
+
+		<action name="deleteSysRole" class="com.lims.action.system.SysRoleAction" method="delete">
+			<result name="success" type="redirect">/pages/system/querySysRole.action</result>
+		</action>
+
+		<action name="addSysRole" class="com.lims.action.system.SysRoleAction" method="add">
+			<result name="success" type="dispatcher">/pages/system/addSysRole.jsp</result>
+		</action>
+
+		<action name="editSysRole" class="com.lims.action.system.SysRoleAction" method="edit">
+			<result name="success" type="dispatcher">/pages/system/editSysRole.jsp</result>
+		</action>
+
+		<action name="submitSysRole" class="com.lims.action.system.SysRoleAction" method="submit">
+			<result name="success" type="redirect">/pages/system/querySysRole.action</result>
+		</action>
+
+		<action name="querySysMenus" class="com.lims.action.system.SysRoleAction" method="querySysMenus">
+			<result name="success" type="json">
+				<param name="root">jsonSysMenuList</param>
+			</result>
+		</action>
+
+
+		<action name="queryOrganization" class="com.lims.action.system.SysOrganizationAction" method="query">
+			<result name="success" type="dispatcher">/pages/system/consignOrganizationList.jsp</result>
+		</action>
+
+		<action name="editOrganization" class="com.lims.action.system.SysOrganizationAction" method="edit">
+			<result name="success" type="dispatcher">/pages/system/editOrganization.jsp</result>
+		</action>
+		
+		<action name="checkOrganizationRepeat" class="com.lims.action.system.SysOrganizationAction" method="checkOrganizationRepeat">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+
+
+		<action name="submitOrganization" class="com.lims.action.system.SysOrganizationAction" method="submit">
+			<result name="success" type="redirect">/pages/system/queryOrganization.action</result>
+		</action>
+
+
+		<action name="locusInfoManage" class="com.lims.action.system.LocusInfoManageAction" method="query">
+			<result name="success" type="dispatcher">/pages/system/listLocusInfo.jsp</result>
+		</action>
+
+		<action name="submitLocusInfo" class="com.lims.action.system.LocusInfoManageAction" method="submit">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+
+
+		<action name="reagentKitManage" class="com.lims.action.system.ReagentKitManageAction" method="query">
+			<result name="success" type="dispatcher">/pages/system/listReagentKit.jsp</result>
+		</action>
+
+		<action name="intoReagentKit" class="com.lims.action.system.ReagentKitManageAction" method="into">
+			<result name="add" type="dispatcher">/pages/system/addReagentKit.jsp</result>
+			<result name="edit" type="dispatcher">/pages/system/editReagentKit.jsp</result>
+			<result name="delete" type="redirect">/pages/system/reagentKitManage.action</result>
+		</action>
+
+		<action name="importPanelFile" class="com.lims.action.system.ReagentKitManageAction" method="importPanelFile">
+		</action>
+
+		<action name="submitReagentKit" class="com.lims.action.system.ReagentKitManageAction" method="submit">
+			<result name="success" type="redirect">/pages/system/reagentKitManage.action</result>
+		</action>
+
+		<action name="downloadIEBrower" class="com.lims.action.system.HelpAction" method="downloadIEBrower">
+            <result name="success" type="stream">
+                <!-- 下载文件类型定义 -->
+                <param name="contentType">
+                    ${contentType}
+                </param>
+                <!-- 下载文件处理方法 -->
+                <param name="contentDisposition">
+                    attachment;filename="${filename}"
+                </param>
+                <!-- 下载文件输出流定义 -->
+                <param name="inputName">inputStream</param>
+                <param name="bufferSize">2048</param>
+            </result>
+		</action>
+
+		<action name="downloadWinrar" class="com.lims.action.system.HelpAction" method="downloadWinrar">
+			<result name="success" type="stream">
+                <!-- 下载文件类型定义 -->
+                <param name="contentType">
+                    ${contentType}
+                </param>
+                <!-- 下载文件处理方法 -->
+                <param name="contentDisposition">
+                    attachment;filename="${filename}"
+                </param>
+                <!-- 下载文件输出流定义 -->
+                <param name="inputName">inputStream</param>
+                <param name="bufferSize">2048</param>
+            </result>
+		</action>
+
+		<action name="downloadManual" class="com.lims.action.system.UserManualAction" method="downloadManual">
+			 <result name="success" type="stream">
+                <!-- 下载文件类型定义 -->
+                <param name="contentType">
+                    ${contentType}
+                </param>
+                <!-- 下载文件处理方法 -->
+                <param name="contentDisposition">
+                    attachment;filename="${filename}"
+                </param>
+                <!-- 下载文件输出流定义 -->
+                <param name="inputName">inputStream</param>
+                <param name="bufferSize">2048</param>
+            </result>
+		</action>
+
+
+		<action name="intoUpdatePassword" class="com.lims.action.system.SysUserAction" method="intoUpdatePassword">
+			<result name="success" type="dispatcher">/pages/system/updatePassword.jsp</result>
+		</action>
+
+	</package>
+
+</struts>

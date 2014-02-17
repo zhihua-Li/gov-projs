@@ -1,0 +1,550 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="BoardInfoMapper">
+
+  <select id="findBoardInfoById" parameterType="java.lang.String"
+  	resultType="BoardInfo">
+    select
+    	b.ID as id,
+	    b.BOARD_NAME as boardName,
+	    b.BOARD_NO as boardNo,
+	    b.CONSIGNMENT_NO as consignmentNo,
+	    b.WORKSTATION_FILENAME as workstationFilename,
+	    b.BARCODELESS_NUM as barcodelessNum,
+	    b.SAMPLELESS_NUM as samplelessNum,
+	    b.HOLE_DIAMETER as holeDiameter,
+	    b.EXAMINE_TYPE as examineType,
+	    b.EXAMINE_STATUS as examineStatus,
+	    b.EXAMINE_DATE as examineDate,
+	    b.EXAMINE_USER as examineUser,
+	    b.IMPORT_DATE as importDate,
+	    b.IMPORT_USER as importUser,
+	    b.UPDATE_DATE as updateDate,
+	    b.UPDATE_USER as updateUser,
+	    b.REMARK as remark,
+	    b.REVIEW_STATUS as reviewStatus,
+	    b.REVIEW_USER as reviewUser,
+	    b.REVIEW_DATE as reviewDate,
+	    b.PCR_FLAG as pcrFlag,
+	    b.ANALYSIS_FLAG as analysisFlag,
+	    b.HOLE_DIAMETER_OTHER as holeDiameterOther,
+	    b.EXAMINE_INSTRUMENT_NO as examineInstrumentNo,
+    	b.GENERATE_RECORD_FLAG as generateRecordFlag,
+    	b.GENERATE_SY_TABLE_FLAG as generateSyTableFlag,
+    	b.GENERATE_RECORD_DATE as generateRecordDate,
+    	b.GENERATE_SY_TABLE_DATE as generateSyTableDate,
+    	b.IMPORT_RESULT_FLAG as importResultFlag,
+    	b.IMPORT_RESULT_DATE as importResultDate,
+	    c.ID as consignmentId
+    from BOARD_INFO b, CONSIGNMENT c
+    where b.consignment_no=c.consignment_no and b.ID=#{value}
+
+  </select>
+
+
+  <select id="findBoardInfoList" parameterType="BoardInfoQuery"
+  	resultType="BoardInfoView">
+  	<if test="endRowNum != 0">
+		select * from (
+			select t.*, rownum rn from (
+	</if>
+		<if test="sortColumn != null">
+			select b.* from (
+		</if>
+		  	select
+		    	bi.ID as id,
+			    bi.BOARD_NAME as boardName,
+			    bi.BOARD_NO as boardNo,
+			    bi.CONSIGNMENT_NO as consignmentNo,
+			    bi.WORKSTATION_FILENAME as workstationFilename,
+			    bi.BARCODELESS_NUM as barcodelessNum,
+			    bi.SAMPLELESS_NUM as samplelessNum,
+			    bi.HOLE_DIAMETER as holeDiameter,
+			    bi.EXAMINE_TYPE as examineType,
+			    bi.EXAMINE_STATUS as examineStatus,
+			    bi.UPDATE_DATE as updateDate,
+			    bi.UPDATE_USER as updateUser,
+			    bi.REMARK as remark,
+			    bi.REVIEW_STATUS as reviewStatus,
+			    bi.REVIEW_USER as reviewUser,
+			    bi.REVIEW_DATE as reviewDate,
+		   		bi.HOLE_DIAMETER_OTHER as holeDiameterOther,
+		    	bi.EXAMINE_INSTRUMENT_NO as examineInstrumentNo,
+		    	bi.GENERATE_RECORD_FLAG as generateRecordFlag,
+		    	bi.GENERATE_SY_TABLE_FLAG as generateSyTableFlag,
+		    	bi.GENERATE_RECORD_DATE as generateRecordDate,
+		    	bi.GENERATE_SY_TABLE_DATE as generateSyTableDate,
+		    	bi.PCR_FLAG as pcrFlag,
+		    	bi.ANALYSIS_FLAG as analysisFlag,
+		    	bi.IMPORT_RESULT_FLAG as importResultFlag,
+		    	bi.IMPORT_RESULT_DATE as importResultDate,
+			    bi.IMPORT_DATE as importDate,
+			    bi.IMPORT_USER as importUser,
+			    bi.SYRECORD_DOWNLOAD_CNT as syrecordDownloadCnt,
+			    bi.EXAMINE_RECORD_DOWNLOAD_CNT as examineRecordDownloadCnt,
+			    pr.PCR_DATE as pcrDate,
+			    er.EXAMINE_DATE as examineDate,
+			    ar.ANALYSIS_DATE as analysisDate,
+			    rr.REVIEW_DATE as examineReviewDate,
+			    s.FULL_NAME as importUserName,
+			    c.ORGANIZATION_ID as organizationId,
+			    co.ORGANIZATION_NAME as organizationName,
+			    c.ORGANIZATION_SUB_NAME as organizationSubName,
+			    c.CONSIGN_DATE as consignDate,
+			    c.ID as consignmentId,
+			    di.dict_value as examineStatusName,
+			    di1.dict_value as examineTypeName,
+			    rsdi.dict_value as reviewStatusName,
+			    pu.FULL_NAME as pcrUserName,
+			    eu.FULL_NAME as examineUserName,
+			    au.FULL_NAME as analysisUserName,
+			    ru.FULL_NAME as examineReviewUserName
+		    from BOARD_INFO bi, SYS_USER s, CONSIGNMENT c, CONSIGN_ORGANIZATION co,
+		    	PCR_RECORD pr, examine_record er, ANALYSIS_RECORD ar, review_record rr,
+		    	(select DICT_KEY, DICT_VALUE from dict_item where dict_info_type='EXAMINE_STATUS') di,
+		    	(select DICT_KEY, DICT_VALUE from dict_item where dict_info_type='EXAMINE_TYPE') di1,
+		    	(select DICT_KEY, DICT_VALUE from DICT_ITEM where dict_info_type='REVIEW_STATUS') rsdi,
+		    	sys_user pu,
+		    	sys_user eu,
+		    	sys_user au,
+		    	sys_user ru
+		    where bi.IMPORT_USER=s.ID(+)
+		    	and bi.CONSIGNMENT_NO=c.CONSIGNMENT_NO
+		    	and c.ORGANIZATION_ID=co.ID(+)
+		    	and bi.EXAMINE_STATUS=di.DICT_KEY(+)
+		    	and bi.EXAMINE_TYPE=di1.DICT_KEY(+)
+		    	and bi.REVIEW_STATUS=rsdi.DICT_KEY(+)
+		    	and pr.PCR_USER=pu.id(+)
+		    	and er.EXAMINE_USER=eu.id(+)
+		    	and ar.CREATE_USER=au.id(+)
+		    	and rr.REVIEW_USER=ru.id(+)
+		    	and bi.id=pr.BOARD_INFO_ID(+)
+		    	and bi.id=ar.BOARD_INFO_ID(+)
+		    	and bi.id=er.board_id(+)
+		    	and bi.id=rr.board_id(+)
+
+		    	<if test="fuzzyFlag != null">
+		    		<if test="consignmentNo != null">
+						AND bi.CONSIGNMENT_NO like '%'||#{consignmentNo}||'%'
+					</if>
+					<if test="boardNo != null">
+						AND bi.BOARD_NO like '%'||#{boardNo}||'%'
+					</if>
+		    	</if>
+		    	<if test="fuzzyFlag == null">
+		    		<if test="consignmentNo != null">
+						AND bi.CONSIGNMENT_NO=#{consignmentNo}
+					</if>
+					<if test="boardNo != null">
+						AND bi.BOARD_NO=#{boardNo}
+					</if>
+		    	</if>
+
+				<if test="importDateStart != null">
+					<![CDATA[	AND bi.IMPORT_DATE>=#{importDateStart}	]]>
+				</if>
+				<if test="importDateEnd != null">
+					<![CDATA[	AND bi.IMPORT_DATE<=#{importDateEnd}	]]>
+				</if>
+				<if test="importUser != null">
+					AND bi.IMPORT_USER=#{importUser}
+				</if>
+				<if test="pcrFlag != null">
+					AND bi.PCR_FLAG=#{pcrFlag}
+				</if>
+				<if test="analysisFlag != null">
+					AND bi.ANALYSIS_FLAG=#{analysisFlag}
+				</if>
+				<if test="examineStatus != null">
+					AND bi.EXAMINE_STATUS=#{examineStatus}
+				</if>
+				<if test="examineType != null">
+					AND bi.EXAMINE_TYPE=#{examineType}
+				</if>
+				<if test="reviewStatus != null">
+					AND bi.REVIEW_STATUS=#{reviewStatus}
+				</if>
+				<if test="sampleNo != null">
+					AND bi.ID in (
+						select bsm.BOARD_ID from board_sample_map bsm, SAMPLE_INFO s
+							where bsm.SAMPLE_ID=s.ID and s.SAMPLE_NO=#{sampleNo}
+					)
+				</if>
+				<if test="importResultFlag != null">
+					and bi.IMPORT_RESULT_FLAG=#{importResultFlag, jdbcType=CHAR}
+				</if>
+				<if test="organizationId != null">
+					and c.ORGANIZATION_ID=#{organizationId}
+				</if>
+				<if test="consignDateStart != null">
+					<![CDATA[	and c.CONSIGN_DATE>=#{consignDateStart, jdbcType=TIMESTAMP}	]]>
+				</if>
+				<if test="consignDateEnd != null">
+					<![CDATA[	and c.CONSIGN_DATE<=#{consignDateEnd, jdbcType=TIMESTAMP}	]]>
+				</if>
+
+				<if test="pcrDateStart != null">
+					<![CDATA[
+						and bi.id in (
+							select board_info_id from pcr_record where PCR_DATE>=#{pcrDateStart, jdbcType=TIMESTAMP}
+						)
+					]]>
+				</if>
+				<if test="pcrDateEnd != null">
+					<![CDATA[
+						and bi.id in (
+							select board_info_id from pcr_record where PCR_DATE<=#{pcrDateEnd, jdbcType=TIMESTAMP}
+						)
+					]]>
+				</if>
+
+				<if test="examineDateStart != null">
+					<![CDATA[
+						and bi.id in (
+							select board_id from examine_record where EXAMINE_DATE>=#{examineDateStart, jdbcType=TIMESTAMP}
+						)
+					]]>
+				</if>
+				<if test="examineDateEnd != null">
+					<![CDATA[
+						and bi.id in (
+							select board_id from examine_record where EXAMINE_DATE>=#{examineDateEnd, jdbcType=TIMESTAMP}
+						)
+					]]>
+				</if>
+
+				<if test="analysisDateStart != null">
+					<![CDATA[
+						and bi.id in (
+							select board_info_id from analysis_record where ANALYSIS_DATE>=#{analysisDateStart, jdbcType=TIMESTAMP}
+						)
+					]]>
+				</if>
+				<if test="analysisDateEnd != null">
+					<![CDATA[
+						and bi.id in (
+							select board_info_id from analysis_record where ANALYSIS_DATE<=#{analysisDateEnd, jdbcType=TIMESTAMP}
+						)
+					]]>
+				</if>
+
+				<if test="examineReviewDateStart != null">
+					<![CDATA[
+						and bi.id in (
+							select board_id from review_record where REVIEW_DATE>=#{examineReviewDateStart, jdbcType=TIMESTAMP}
+						)
+					]]>
+				</if>
+				<if test="examineReviewDateEnd != null">
+					<![CDATA[
+						and bi.id in (
+							select board_id from review_record where REVIEW_DATE<=#{examineReviewDateEnd, jdbcType=TIMESTAMP}
+						)
+					]]>
+				</if>
+
+		<if test="sortColumn != null">
+			) b order by ${sortColumn} ${sortOrder}
+		</if>
+		<if test="sortColumn == null">
+			order by bi.import_date
+		</if>
+
+    <if test="endRowNum != 0">
+		) t
+		<![CDATA[
+			where rownum <= #{endRowNum}) where rn >= #{startRowNum}
+		]]>
+	</if>
+  </select>
+
+
+  <select id="findBoardInfoListCount" parameterType="BoardInfoQuery" resultType="int">
+  		select count(bi.ID) from BOARD_INFO bi
+	    <where>
+			<if test="fuzzyFlag != null">
+	    		<if test="consignmentNo != null">
+						AND bi.CONSIGNMENT_NO like '%'||#{consignmentNo}||'%'
+					</if>
+					<if test="boardNo != null">
+						AND bi.BOARD_NO like '%'||#{boardNo}||'%'
+					</if>
+	    	</if>
+	    	<if test="fuzzyFlag == null">
+	    		<if test="consignmentNo != null">
+					AND bi.CONSIGNMENT_NO=#{consignmentNo}
+				</if>
+				<if test="boardNo != null">
+					AND bi.BOARD_NO=#{boardNo}
+				</if>
+	    	</if>
+			<if test="importDateStart != null">
+				<![CDATA[	AND bi.IMPORT_DATE>=#{importDateStart}	]]>
+			</if>
+			<if test="importDateEnd != null">
+				<![CDATA[	AND bi.IMPORT_DATE<=#{importDateEnd}	]]>
+			</if>
+			<if test="importUser != null">
+				AND bi.IMPORT_USER=#{importUser}
+			</if>
+			<if test="pcrFlag != null">
+				AND bi.PCR_FLAG=#{pcrFlag}
+			</if>
+			<if test="analysisFlag != null">
+				AND bi.ANALYSIS_FLAG=#{analysisFlag}
+			</if>
+			<if test="examineStatus != null">
+				AND bi.EXAMINE_STATUS=#{examineStatus}
+			</if>
+			<if test="examineType != null">
+				AND bi.EXAMINE_TYPE=#{examineType}
+			</if>
+			<if test="reviewStatus != null">
+				AND bi.REVIEW_STATUS=#{reviewStatus}
+			</if>
+			<if test="sampleNo != null">
+				AND bi.ID in (
+					select bsm.BOARD_ID from board_sample_map bsm, SAMPLE_INFO s
+						where bsm.SAMPLE_ID=s.ID and s.SAMPLE_NO=#{sampleNo}
+				)
+			</if>
+			<if test="importResultFlag != null">
+				and bi.IMPORT_RESULT_FLAG=#{importResultFlag, jdbcType=CHAR}
+			</if>
+			<if test="organizationId != null">
+				and c.ORGANIZATION_ID=#{organizationId}
+			</if>
+			<if test="consignDateStart != null">
+				<![CDATA[	and c.CONSIGN_DATE>=#{consignDateStart, jdbcType=TIMESTAMP}	]]>
+			</if>
+			<if test="consignDateEnd != null">
+				<![CDATA[	and c.CONSIGN_DATE<=#{consignDateEnd, jdbcType=TIMESTAMP}	]]>
+			</if>
+			<if test="pcrDateStart != null">
+					<![CDATA[
+						and bi.id in (
+							select board_info_id from pcr_record where PCR_DATE>=#{pcrDateStart, jdbcType=TIMESTAMP}
+						)
+					]]>
+				</if>
+				<if test="pcrDateEnd != null">
+					<![CDATA[
+						and bi.id in (
+							select board_info_id from pcr_record where PCR_DATE<=#{pcrDateEnd, jdbcType=TIMESTAMP}
+						)
+					]]>
+				</if>
+
+				<if test="examineDateStart != null">
+					<![CDATA[
+						and bi.id in (
+							select board_id from examine_record where EXAMINE_DATE>=#{examineDateStart, jdbcType=TIMESTAMP}
+						)
+					]]>
+				</if>
+				<if test="examineDateEnd != null">
+					<![CDATA[
+						and bi.id in (
+							select board_id from examine_record where EXAMINE_DATE>=#{examineDateEnd, jdbcType=TIMESTAMP}
+						)
+					]]>
+				</if>
+
+				<if test="analysisDateStart != null">
+					<![CDATA[
+						and bi.id in (
+							select board_info_id from analysis_record where ANALYSIS_DATE>=#{analysisDateStart, jdbcType=TIMESTAMP}
+						)
+					]]>
+				</if>
+				<if test="analysisDateEnd != null">
+					<![CDATA[
+						and bi.id in (
+							select board_info_id from analysis_record where ANALYSIS_DATE<=#{analysisDateEnd, jdbcType=TIMESTAMP}
+						)
+					]]>
+				</if>
+
+				<if test="examineReviewDateStart != null">
+					<![CDATA[
+						and bi.id in (
+							select board_id from review_record where REVIEW_DATE>=#{examineReviewDateStart, jdbcType=TIMESTAMP}
+						)
+					]]>
+				</if>
+				<if test="examineReviewDateEnd != null">
+					<![CDATA[
+						and bi.id in (
+							select board_id from review_record where REVIEW_DATE<=#{examineReviewDateEnd, jdbcType=TIMESTAMP}
+						)
+					]]>
+				</if>
+		</where>
+  </select>
+
+
+  <select id="findBoardSampleListByBoardId" parameterType="java.lang.String"
+  	resultType="BoardSampleMap">
+  	select t.ID as id,
+  		t.BOARD_ID as boardId,
+  		t.SAMPLE_ID as sampleId,
+  		t.SAMPLE_POSITION as samplePosition,
+  		s.SAMPLE_NO as sampleNo
+  	from BOARD_SAMPLE_MAP t, SAMPLE_INFO s
+  	where t.SAMPLE_ID=s.ID and t.BOARD_ID=#{value}
+  	order by t.SAMPLE_POSITION
+  </select>
+  
+  <select id="findBoardInfoListBySampleId" parameterType="java.lang.String" resultType="BoardInfo">
+  	select
+    	b.ID as id,
+	    b.BOARD_NAME as boardName,
+	    b.BOARD_NO as boardNo,
+	    b.CONSIGNMENT_NO as consignmentNo,
+	    b.WORKSTATION_FILENAME as workstationFilename,
+	    b.BARCODELESS_NUM as barcodelessNum,
+	    b.SAMPLELESS_NUM as samplelessNum,
+	    b.HOLE_DIAMETER as holeDiameter,
+	    b.EXAMINE_TYPE as examineType,
+	    b.EXAMINE_STATUS as examineStatus,
+	    b.EXAMINE_DATE as examineDate,
+	    b.EXAMINE_USER as examineUser,
+	    b.IMPORT_DATE as importDate,
+	    b.IMPORT_USER as importUser,
+	    b.UPDATE_DATE as updateDate,
+	    b.UPDATE_USER as updateUser,
+	    b.REMARK as remark,
+	    b.REVIEW_STATUS as reviewStatus,
+	    b.REVIEW_USER as reviewUser,
+	    b.REVIEW_DATE as reviewDate,
+	    b.PCR_FLAG as pcrFlag,
+	    b.ANALYSIS_FLAG as analysisFlag,
+	    b.HOLE_DIAMETER_OTHER as holeDiameterOther,
+	    b.EXAMINE_INSTRUMENT_NO as examineInstrumentNo,
+    	b.GENERATE_RECORD_FLAG as generateRecordFlag,
+    	b.GENERATE_SY_TABLE_FLAG as generateSyTableFlag,
+    	b.GENERATE_RECORD_DATE as generateRecordDate,
+    	b.GENERATE_SY_TABLE_DATE as generateSyTableDate,
+    	b.IMPORT_RESULT_FLAG as importResultFlag,
+    	b.IMPORT_RESULT_DATE as importResultDate
+    from BOARD_INFO b
+    where b.ID in (
+    	select board_id from board_sample_map where sample_id=#{value}
+    )
+  </select>
+
+  <select id="insertBatchBoardSampleMap" parameterType="ArrayList">
+	insert into BOARD_SAMPLE_MAP (
+			ID, BOARD_ID, SAMPLE_ID, SAMPLE_POSITION)
+		<foreach collection="list" item="boardSampleMap" index="index" separator="union all">
+			select #{boardSampleMap.id}, #{boardSampleMap.boardId}, #{boardSampleMap.sampleId}, #{boardSampleMap.samplePosition} from dual
+		</foreach>
+  </select>
+
+  <delete id="deleteBoardSampleMapByBoardId" parameterType="java.lang.String">
+  	delete from BOARD_SAMPLE_MAP where BOARD_ID=#{value}
+  </delete>
+
+  <delete id="deleteBoardSampleMapBySampleId" parameterType="java.lang.String">
+  	delete from BOARD_SAMPLE_MAP where SAMPLE_ID=#{value}
+  </delete>
+
+  <delete id="deleteBoardSampleMapByConsignmentId" parameterType="java.lang.String">
+  	delete from board_sample_map bsm where bsm.board_id in (
+  		select b.id from board_info b where b.consignment_no in (
+  			select c.consignment_no from consignment c where c.id=#{value}
+  		)
+  	)
+  </delete>
+
+  <delete id="deleteBoardInfoById" parameterType="java.lang.String">
+  	delete from BOARD_INFO b where b.ID=#{value}
+  </delete>
+
+  <delete id="deleteBoardInfoByConsignmentId" parameterType="java.lang.String">
+  	delete from BOARD_INFO b where b.CONSIGNMENT_NO in (
+  		select c.consignment_no from consignment c where c.id=#{value}
+  	)
+  </delete>
+
+  <insert id="insertBoardInfo" parameterType="BoardInfo">
+    insert into BOARD_INFO (ID, BOARD_NAME, BOARD_NO,
+      CONSIGNMENT_NO, WORKSTATION_FILENAME, BARCODELESS_NUM,
+      SAMPLELESS_NUM, HOLE_DIAMETER, EXAMINE_TYPE,
+      EXAMINE_STATUS, EXAMINE_DATE, EXAMINE_USER, IMPORT_DATE,
+      IMPORT_USER, UPDATE_DATE, UPDATE_USER,
+      REMARK, REVIEW_STATUS, REVIEW_USER, REVIEW_DATE, HOLE_DIAMETER_OTHER)
+    values (#{id,jdbcType=VARCHAR}, #{boardName,jdbcType=VARCHAR}, #{boardNo,jdbcType=VARCHAR},
+      #{consignmentNo,jdbcType=VARCHAR}, #{workstationFilename,jdbcType=VARCHAR}, #{barcodelessNum,jdbcType=VARCHAR},
+      #{samplelessNum,jdbcType=VARCHAR}, #{holeDiameter,jdbcType=VARCHAR}, #{examineType,jdbcType=VARCHAR},
+      #{examineStatus,jdbcType=VARCHAR}, #{examineDate,jdbcType=TIMESTAMP}, #{examineUser,jdbcType=VARCHAR},
+      #{importDate,jdbcType=TIMESTAMP}, #{importUser,jdbcType=VARCHAR},
+      #{updateDate,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR},
+      #{remark,jdbcType=VARCHAR},#{reviewStatus, jdbcType=VARCHAR},
+      #{reviewUser, jdbcType=VARCHAR},#{reviewDate, jdbcType=TIMESTAMP},
+      #{holeDiameterOther, jdbcType=VARCHAR})
+  </insert>
+
+  <update id="updateBoardInfo" parameterType="BoardInfo">
+    update BOARD_INFO
+    set BOARD_NAME = #{boardName,jdbcType=VARCHAR},
+      BOARD_NO = #{boardNo,jdbcType=VARCHAR},
+      CONSIGNMENT_NO = #{consignmentNo,jdbcType=VARCHAR},
+      WORKSTATION_FILENAME = #{workstationFilename,jdbcType=VARCHAR},
+      BARCODELESS_NUM = #{barcodelessNum,jdbcType=VARCHAR},
+      SAMPLELESS_NUM = #{samplelessNum,jdbcType=VARCHAR},
+      HOLE_DIAMETER = #{holeDiameter,jdbcType=VARCHAR},
+      EXAMINE_TYPE = #{examineType,jdbcType=VARCHAR},
+      EXAMINE_STATUS = #{examineStatus,jdbcType=VARCHAR},
+      EXAMINE_DATE = #{examineDate,jdbcType=TIMESTAMP},
+      EXAMINE_USER = #{examineUser, jdbcType=VARCHAR},
+      IMPORT_DATE = #{importDate,jdbcType=TIMESTAMP},
+      IMPORT_USER = #{importUser,jdbcType=VARCHAR},
+      UPDATE_DATE = #{updateDate,jdbcType=TIMESTAMP},
+      UPDATE_USER = #{updateUser,jdbcType=VARCHAR},
+      REMARK = #{remark,jdbcType=VARCHAR},
+      PCR_FLAG = #{pcrFlag, jdbcType=VARCHAR},
+      ANALYSIS_FLAG = #{analysisFlag, jdbcType=VARCHAR},
+      REVIEW_STATUS=#{reviewStatus, jdbcType=VARCHAR},
+      REVIEW_USER=#{reviewUser, jdbcType=VARCHAR},
+      REVIEW_DATE=#{reviewDate, jdbcType=VARCHAR},
+      HOLE_DIAMETER_OTHER=#{holeDiameterOther,jdbcType=VARCHAR},
+      EXAMINE_INSTRUMENT_NO=#{examineInstrumentNo, jdbcType=VARCHAR},
+      GENERATE_RECORD_FLAG=#{generateRecordFlag, jdbcType=CHAR},
+      GENERATE_SY_TABLE_FLAG=#{generateSyTableFlag, jdbcType=CHAR},
+      GENERATE_RECORD_DATE=#{generateRecordDate, jdbcType=TIMESTAMP},
+      GENERATE_SY_TABLE_DATE=#{generateSyTableDate, jdbcType=TIMESTAMP},
+      IMPORT_RESULT_FLAG=#{importResultFlag, jdbcType=CHAR},
+      IMPORT_RESULT_DATE=#{importResultDate, jdbcType=CHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateBoardDownloadCount" parameterType="Map">
+  	update BOARD_INFO
+  	set
+  		<if test="recordType == 1">
+  			SYRECORD_DOWNLOAD_CNT=(SYRECORD_DOWNLOAD_CNT+1)
+  		</if>
+  		<if test="recordType == 2">
+  			EXAMINE_RECORD_DOWNLOAD_CNT=(EXAMINE_RECORD_DOWNLOAD_CNT+1)
+  		</if>
+  	where ID in
+  	<foreach collection="boardIdList" index="index" item="boardId" open="(" separator="," close=")">
+		#{boardId}
+	</foreach>
+  </update>
+
+  <update id="updateReviewStatusBatch" parameterType="Map">
+	update BOARD_INFO
+	set REVIEW_STATUS=#{reviewStatus},
+		REVIEW_DATE=#{reviewDate},
+		REVIEW_USER=#{reviewUser},
+		UPDATE_DATE=#{updateDate},
+		UPDATE_USER=#{updateUser}
+	where ID in
+	<foreach collection="boardIdList" index="index" item="boardId" open="(" separator="," close=")">
+		#{boardId}
+	</foreach>
+  </update>
+
+</mapper>

@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="CodisSampleMapper">
+
+
+	  <select id="findCodisSampleBySampleNo" parameterType="String"
+	  	resultType="CodisSample">
+	  	select
+	  		s.ID as id,
+	  		s.SAMPLE_NO as sampleNo,
+	  		s.CONSIGN_ORGANIZATION_ID as consignOrganizationId,
+	  		s.BOARD_INFO_NO as boardInfoNo,
+	  		s.REAGENT_KIT as reagentKit,
+	  		s.IMPORT_DATE as importDate,
+	  		s.IMPORT_USER as importUser,
+	  		s.REMARK as remark,
+	  		c.ORGANIZATION_NAME as consignOrganizationName,
+	  		u.FULL_NAME as importUserName
+	  	from CODIS_SAMPLE s
+	  		left join SYS_USER u on s.import_user=u.id
+	  		left join CONSIGN_ORGANIZATION c on s.CONSIGN_ORGANIZATION_ID=c.ID
+	  	where s.SAMPLE_NO=#{value}
+	  </select>
+
+	  <select id="findCodisSampleById" parameterType="String"
+	  	resultType="CodisSample">
+	  	select
+	  		s.ID as id,
+	  		s.SAMPLE_NO as sampleNo,
+	  		s.CONSIGN_ORGANIZATION_ID as consignOrganizationId,
+	  		s.BOARD_INFO_NO as boardInfoNo,
+	  		s.REAGENT_KIT as reagentKit,
+	  		s.IMPORT_DATE as importDate,
+	  		s.IMPORT_USER as importUser,
+	  		s.REMARK as remark,
+	  		c.ORGANIZATION_NAME as consignOrganizationName,
+	  		u.FULL_NAME as importUserName
+	  	from CODIS_SAMPLE s
+	  		left join SYS_USER u on s.import_user=u.id
+	  		left join CONSIGN_ORGANIZATION c on s.CONSIGN_ORGANIZATION_ID=c.ID
+	  	where s.ID=#{value}
+	  </select>
+
+
+	  <select id="findCodisSampleListCount" parameterType="CodisSample" resultType="int">
+	  	select count(c.id) from CODIS_SAMPLE c
+	  	<where>
+	  		<if test="sampleNo != null">
+	  			c.SAMPLE_NO=#{sampleNo}
+	  		</if>
+	  		<if test="boardInfoNo != null">
+	  			and c.BOARD_INFO_NO=#{boardInfoNo}
+	  		</if>
+	  		<if test="consignOrganizationId != null">
+	  			and c.CONSIGN_ORGANIZATION_ID=#{consignOrganizationId}
+	  		</if>
+	  		<if test="importUser != null">
+	  			and c.import_user=#{importUser}
+	  		</if>
+	  	</where>
+	  </select>
+
+	  <select id="findCodisSampleList" parameterType="CodisSample" resultType="CodisSample">
+	  	<if test="endRowNum != 0">
+			select * from (
+				select t.*, rownum rn from (
+		</if>
+
+		<if test="sortColumn != null">
+			select si.* from (
+		</if>
+
+	  	select
+	  		s.ID as id,
+	  		s.SAMPLE_NO as sampleNo,
+	  		s.CONSIGN_ORGANIZATION_ID as consignOrganizationId,
+	  		s.BOARD_INFO_NO as boardInfoNo,
+	  		s.REAGENT_KIT as reagentKit,
+	  		s.IMPORT_DATE as importDate,
+	  		s.IMPORT_USER as importUser,
+	  		s.REMARK as remark,
+	  		c.ORGANIZATION_NAME as consignOrganizationName,
+	  		u.FULL_NAME as importUserName
+	  	from CODIS_SAMPLE s
+	  		left join SYS_USER u on s.import_user=u.id
+	  		left join CONSIGN_ORGANIZATION c on s.CONSIGN_ORGANIZATION_ID=c.ID
+	  	<where>
+	  		<if test="sampleNo != null">
+	  			s.SAMPLE_NO=#{sampleNo}
+	  		</if>
+	  		<if test="boardInfoNo != null">
+	  			and s.BOARD_INFO_NO=#{boardInfoNo}
+	  		</if>
+	  		<if test="consignOrganizationId != null">
+	  			and s.CONSIGN_ORGANIZATION_ID=#{consignOrganizationId}
+	  		</if>
+	  		<if test="importUser != null">
+	  			and s.import_user=#{importUser}
+	  		</if>
+	  	</where>
+
+	  	<if test="sortColumn != null">
+			) si order by ${sortColumn} ${sortOrder}
+		</if>
+
+	    <if test="endRowNum != 0">
+			) t
+			<![CDATA[
+				where rownum <= #{endRowNum}) where rn >= #{startRowNum}
+			]]>
+		</if>
+	  </select>
+
+	  <select id="findCodisSampleGeneInfoBySampleId" parameterType="String"
+		resultType="GeneInfo">
+		select
+			g.ID as id,
+	    	g.SAMPLE_ID as sampleId,
+	    	g.GENE_TYPE as geneType,
+	      	g.REAGENT_KIT as reagentKit,
+	      	g.GENOTYPE_INFO as genotypeInfo,
+	      	g.STORE_DATE as storeDate,
+	      	g.STORE_USER as storeUser,
+	      	g.MATCH_STATUS as matchStatus,
+	      	g.UPDATE_DATE as updateDate,
+	      	g.UPDATE_USER as updateUser,
+	      	g.REMARK as remark,
+	      	g.SAMPLE_TYPE as sampleType
+	    from GENE_INFO g
+	    where g.SAMPLE_ID=#{value}
+	</select>
+
+	<select id="findCodisSampleGeneInfoById" parameterType="String"
+		resultType="GeneInfo">
+		select
+			g.ID as id,
+	    	g.SAMPLE_ID as sampleId,
+	    	g.GENE_TYPE as geneType,
+	      	g.REAGENT_KIT as reagentKit,
+	      	g.GENOTYPE_INFO as genotypeInfo,
+	      	g.STORE_DATE as storeDate,
+	      	g.STORE_USER as storeUser,
+	      	g.MATCH_STATUS as matchStatus,
+	      	g.UPDATE_DATE as updateDate,
+	      	g.UPDATE_USER as updateUser,
+	      	g.REMARK as remark,
+	      	g.SAMPLE_TYPE as sampleType
+	    from GENE_INFO g
+	    where g.ID=#{value}
+	</select>
+
+	  <select id="insertCodisSampleBatch" parameterType="ArrayList">
+	    insert into CODIS_SAMPLE (
+	    	ID,
+	    	SAMPLE_NO,
+	  		CONSIGN_ORGANIZATION_ID,
+	  		BOARD_INFO_NO,
+	  		REAGENT_KIT,
+	  		IMPORT_DATE,
+	  		IMPORT_USER,
+	  		REMARK
+	    )
+	    <foreach collection="list" item="codisSample" index="index" separator="union all">
+			select
+				#{codisSample.id, jdbcType=VARCHAR},
+				#{codisSample.sampleNo, jdbcType=VARCHAR},
+				#{codisSample.consignOrganizationId, jdbcType=VARCHAR},
+				#{codisSample.boardInfoNo, jdbcType=VARCHAR},
+				#{codisSample.reagentKit, jdbcType=VARCHAR},
+				#{codisSample.importDate, jdbcType=TIMESTAMP},
+				#{codisSample.importUser, jdbcType=VARCHAR},
+				#{codisSample.remark, jdbcType=VARCHAR}
+			from dual
+		</foreach>
+  </select>
+
+  <delete id="deleteCodisSampleBySampleNo" parameterType="java.lang.String">
+  	delete from CODIS_SAMPLE c where c.SAMPLE_NO=#{value}
+  </delete>
+
+  <delete id="deleteCodisSampleGeneBySampleNo" parameterType="java.lang.String">
+	delete from GENE_INFO g where g.SAMPLE_TYPE='2' AND g.SAMPLE_ID in (
+		select s.id from CODIS_SAMPLE s where s.SAMPLE_NO=#{value}
+	)
+  </delete>
+
+
+  <delete id="deleteCodisSampleBySampleNoList" parameterType="ArrayList">
+  	delete from CODIS_SAMPLE c where c.SAMPLE_NO in
+  	<foreach collection="list" index="index" item="sampleNo" open="(" separator="," close=")">
+		#{sampleNo}
+	</foreach>
+  </delete>
+
+  <delete id="deleteCodisSampleGeneBySampleNoList" parameterType="ArrayList">
+	delete from GENE_INFO g where g.SAMPLE_TYPE='2' AND g.SAMPLE_ID in (
+		select s.id from CODIS_SAMPLE s where s.SAMPLE_NO in
+		<foreach collection="list" index="index" item="sampleNo" open="(" separator="," close=")">
+			#{sampleNo}
+		</foreach>
+	)
+  </delete>
+
+  <update id="updateCodisSample" parameterType="CodisSample">
+  	update CODIS_SAMPLE
+  	<set>
+  		<if test="sampleNo != null">
+  			SAMPLE_NO=#{sampleNo}
+  		</if>
+  	</set>
+  	where id=#{id}
+  </update>
+
+</mapper>

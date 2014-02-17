@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="SysRoleMapper">
+
+	<select id="findSysRoleByUserId" parameterType="java.lang.String"
+		resultType="SysRole">
+		select t.ID as id,
+				t.ROLE_TYPE as roleType,
+				t.ROLE_NAME as roleName,
+				t.ROLE_DESC as roleDesc,
+				t.EDITABLE_FLAG as editableFlag
+		from SYS_ROLE t, SYS_USER_ROLE s
+		where t.ID=s.ROLE_ID
+			AND s.USER_ID=#{value}
+	</select>
+
+	<select id="findAllSysRoles" resultType="SysRole">
+		select t.ID as id,
+				t.ROLE_TYPE as roleType,
+				t.ROLE_NAME as roleName,
+				t.ROLE_DESC as roleDesc,
+				t.EDITABLE_FLAG as editableFlag
+		from SYS_ROLE t
+		order by t.ID
+	</select>
+
+	<select id="findSysRole" parameterType="SysRole"
+		resultType="SysRole">
+		<if test="endRowNum != 0">
+			select * from (
+				select t.*, rownum rn from (
+		</if>
+
+			select sr.ID as id,
+				sr.ROLE_TYPE as roleType,
+				sr.ROLE_NAME as roleName,
+				sr.ROLE_DESC as roleDesc,
+				sr.EDITABLE_FLAG as editableFlag
+			from SYS_ROLE sr
+			<where>
+				<if test="id != null">
+					sr.ID=#{id}
+				</if>
+				<if test="roleType != null">
+					AND sr.ROLE_TYPE=#{roleType}
+				</if>
+				<if test="roleName != null">
+					AND sr.ROLE_NAME=#{roleName}
+				</if>
+			</where>
+
+		<if test="endRowNum != 0">
+			) t
+			<![CDATA[
+				where rownum <= #{endRowNum}) where rn >= #{startRowNum}
+			]]>
+		</if>
+	</select>
+
+	<select id="findSysRoleCount" parameterType="SysRole"
+		resultType="int">
+		select count(sr.ID)
+		from SYS_ROLE sr
+		<where>
+			<if test="id != null">
+				sr.ID=#{id}
+			</if>
+			<if test="roleType != null">
+				AND sr.ROLE_TYPE=#{roleType}
+			</if>
+			<if test="roleName != null">
+				AND sr.ROLE_NAME=#{roleName}
+			</if>
+		</where>
+	</select>
+
+	<select id="findSysRoleById" parameterType="java.lang.String"
+		resultType="SysRole">
+		select sr.ID as id,
+				sr.ROLE_TYPE as roleType,
+				sr.ROLE_NAME as roleName,
+				sr.ROLE_DESC as roleDesc,
+				sr.EDITABLE_FLAG as editableFlag
+		from SYS_ROLE sr
+		where sr.ID=#{value}
+	</select>
+
+	<insert id="addSysRole" parameterType="SysRole">
+		insert into SYS_ROLE (
+			ID, ROLE_TYPE, ROLE_NAME, ROLE_DESC
+		) values (
+			#{id, jdbcType=VARCHAR}, #{roleType,jdbcType=VARCHAR}, #{roleName, jdbcType=VARCHAR}, #{roleDesc, jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<select id="addSysRoleMenu" parameterType="ArrayList">
+		insert into SYS_ROLE_MENU (ID, ROLE_ID, MENU_ID)
+		<foreach collection="list" item="sysRoleMenu" index="index" separator="union all">
+			select #{sysRoleMenu.id}, #{sysRoleMenu.roleId}, #{sysRoleMenu.menuId} from dual
+		</foreach>
+	</select>
+
+	<update id="updateSysRole" parameterType="SysRole">
+		update SYS_ROLE t
+		<set>
+			<if test="roleName != null">
+				t.ROLE_NAME=#{roleName, jdbcType=VARCHAR},
+			</if>
+
+			<if test="roleType != null">
+				t.ROLE_TYPE=#{roleType, jdbcType=VARCHAR},
+			</if>
+
+			<if test="roleDesc != null">
+				t.ROLE_DESC=#{roleDesc, jdbcType=VARCHAR},
+			</if>
+		</set>
+
+		where t.ID=#{id}
+	</update>
+
+	<delete id="deleteSysRoleMenuBySysRoleId" parameterType="java.lang.String">
+		delete from SYS_ROLE_MENU t WHERE t.ROLE_ID=#{value}
+	</delete>
+
+</mapper>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+	<package name="examine" namespace="/pages/examine" extends="lims-default">
+
+		<action name="listWaitPcr" class="com.lims.action.examine.PcrInfoAction" method="query">
+			<result name="success" type="dispatcher">/pages/examine/listWaitPcr.jsp</result>
+		</action>
+
+		<action name="intoPcrRecord" class="com.lims.action.examine.PcrInfoAction" method="into">
+			<result name="success" type="dispatcher">/pages/examine/pcrRecordInfo.jsp</result>
+		</action>
+
+		<action name="submitPcrRecord" class="com.lims.action.examine.PcrInfoAction" method="submit">
+			<result name="success" type="redirectAction">
+				<param name="namespace">/pages/examine</param>
+				<param name="actionName">listWaitPcr.action</param>
+				<param name="pageSize">${pageSize}</param>
+				<param name="pageIndex">${pageIndex}</param>
+				<param name="boardInfoQuery.consignmentNo">${boardInfoQuery.consignmentNo}</param>
+				<param name="boardInfoQuery.boardNo">${boardInfoQuery.boardNo}</param>
+				<param name="boardInfoQuery.sortColumn">${boardInfoQuery.sortColumn}</param>
+				<param name="boardInfoQuery.sortOrder">${boardInfoQuery.sortOrder}</param>
+				<param name="boardInfoQuery.importDateStart">${boardInfoQuery.importDateStart}</param>
+				<param name="boardInfoQuery.importDateEnd">${boardInfoQuery.importDateEnd}</param>
+				<param name="boardInfoQuery.fuzzyFlag">${boardInfoQuery.fuzzyFlag}</param>
+			</result>
+		</action>
+
+
+		<action name="listWaitCheck" class="com.lims.action.examine.ExamineCheckAction" method="query">
+			<result name="success" type="dispatcher">/pages/examine/listWaitCheck.jsp</result>
+		</action>
+
+		<action name="intoExamineCheckRecord" class="com.lims.action.examine.ExamineCheckAction" method="into">
+			<result name="success" type="dispatcher">/pages/examine/examineCheckRecordInfo.jsp</result>
+		</action>
+
+		<action name="submitExamineCheckRecord" class="com.lims.action.examine.ExamineCheckAction" method="submit">
+			<result name="success" type="redirectAction">
+				<param name="namespace">/pages/examine</param>
+				<param name="actionName">listWaitCheck.action</param>
+				<param name="pageSize">${pageSize}</param>
+				<param name="pageIndex">${pageIndex}</param>
+				<param name="boardInfoQuery.consignmentNo">${boardInfoQuery.consignmentNo}</param>
+				<param name="boardInfoQuery.boardNo">${boardInfoQuery.boardNo}</param>
+				<param name="boardInfoQuery.sortColumn">${boardInfoQuery.sortColumn}</param>
+				<param name="boardInfoQuery.sortOrder">${boardInfoQuery.sortOrder}</param>
+				<param name="boardInfoQuery.pcrDateStart">${boardInfoQuery.pcrDateStart}</param>
+				<param name="boardInfoQuery.pcrDateEnd">${boardInfoQuery.pcrDateEnd}</param>
+				<param name="boardInfoQuery.fuzzyFlag">${boardInfoQuery.fuzzyFlag}</param>
+			</result>
+		</action>
+
+
+		<action name="listWaitAnalysis" class="com.lims.action.examine.AnalysisCheckAction" method="query">
+			<result name="success" type="dispatcher">/pages/examine/listAnalysisCheck.jsp</result>
+		</action>
+
+		<action name="intoAnalysisRecord" class="com.lims.action.examine.AnalysisCheckAction" method="into">
+			<result name="success" type="dispatcher">/pages/examine/analysisRecordInfo.jsp</result>
+		</action>
+
+		<action name="submitAnalysisRecord" class="com.lims.action.examine.AnalysisCheckAction" method="submit">
+			<result name="success" type="redirectAction">
+				<param name="namespace">/pages/examine</param>
+				<param name="actionName">listWaitAnalysis.action</param>
+				<param name="pageSize">${pageSize}</param>
+				<param name="pageIndex">${pageIndex}</param>
+				<param name="boardInfoQuery.consignmentNo">${boardInfoQuery.consignmentNo}</param>
+				<param name="boardInfoQuery.boardNo">${boardInfoQuery.boardNo}</param>
+				<param name="boardInfoQuery.sortColumn">${boardInfoQuery.sortColumn}</param>
+				<param name="boardInfoQuery.sortOrder">${boardInfoQuery.sortOrder}</param>
+				<param name="boardInfoQuery.examineDateStart">${boardInfoQuery.examineDateStart}</param>
+				<param name="boardInfoQuery.examineDateEnd">${boardInfoQuery.examineDateEnd}</param>
+				<param name="boardInfoQuery.fuzzyFlag">${boardInfoQuery.fuzzyFlag}</param>
+			</result>
+		</action>
+
+		<action name="listWaitReview" class="com.lims.action.examine.ReviewAction" method="query">
+			<result name="success" type="dispatcher">/pages/examine/listWaitReviwe.jsp</result>
+		</action>
+
+		<action name="intoReviewRecord" class="com.lims.action.examine.ReviewAction" method="into">
+			<result name="success" type="dispatcher">/pages/examine/reviewRecordInfo.jsp</result>
+		</action>
+
+		<action name="submitReviewRecord" class="com.lims.action.examine.ReviewAction" method="submit">
+			<result name="success" type="redirectAction">
+				<param name="namespace">/pages/examine</param>
+				<param name="actionName">listWaitReview.action</param>
+				<param name="pageSize">${pageSize}</param>
+				<param name="pageIndex">${pageIndex}</param>
+				<param name="boardInfoQuery.consignmentNo">${boardInfoQuery.consignmentNo}</param>
+				<param name="boardInfoQuery.boardNo">${boardInfoQuery.boardNo}</param>
+				<param name="boardInfoQuery.sortColumn">${boardInfoQuery.sortColumn}</param>
+				<param name="boardInfoQuery.sortOrder">${boardInfoQuery.sortOrder}</param>
+				<param name="boardInfoQuery.analysisDateStart">${boardInfoQuery.analysisDateStart}</param>
+				<param name="boardInfoQuery.analysisDateEnd">${boardInfoQuery.analysisDateEnd}</param>
+				<param name="boardInfoQuery.fuzzyFlag">${boardInfoQuery.fuzzyFlag}</param>
+			</result>
+		</action>
+
+		<action name="listExamineRecords" class="com.lims.action.examine.ExamineRecordAction" method="query">
+			<result name="success" type="dispatcher">/pages/examine/listExamineRecords.jsp</result>
+		</action>
+
+		<action name="viewExamineRecord" class="com.lims.action.examine.ExamineRecordAction" method="view">
+			<result name="success" type="dispatcher">/pages/examine/viewExamineRecord.jsp</result>
+		</action>
+
+	</package>
+
+</struts>

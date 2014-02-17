@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="FileUploadRecordMapper">
+
+	<select id="findFileUploadRecordListCount" parameterType="FileUploadRecord"
+		resultType="int">
+		select count(id)
+		from FILE_UPLOAD_RECORD
+		<where>
+			<if test="fileName != null">
+				FILE_NAME=#{fileName}
+			</if>
+			<if test="uploadUser != null">
+				and UPLOAD_USER=#{uploadUser}
+			</if>
+			<if test="uploadDateStart != null">
+				<![CDATA[	and UPLOAD_DATE >= #{uploadDateStart}	]]>
+			</if>
+			<if test="uploadDateEnd != null">
+				<![CDATA[	and UPLOAD_DATE <= #{uploadDateEnd}	]]>
+			</if>
+		</where>
+	</select>
+
+	<select id="findFileUploadRecordList" parameterType="FileUploadRecord"
+		resultType="FileUploadRecord">
+		<if test="endRowNum != 0">
+			select * from (
+				select t.*, rownum rn from (
+		</if>
+
+		<if test="sortColumn != null">
+			select si.* from (
+		</if>
+
+			select f.ID as id,
+			  f.FILE_FULL_PATH as fileFullPath,
+			  f.FILE_NAME as fileName,
+			  f.FILE_SIZE as fileSize,
+			  f.UPLOAD_USER as uploadUser,
+			  f.UPLOAD_DATE as uploadDate,
+			  f.FILE_TYPE as fileType,
+			  s.dict_value as fileTypeName
+			from FILE_UPLOAD_RECORD f left join (select dict_key, dict_value from dict_item where dict_info_type='UPLOAD_FILE_TYPE') s on f.file_type=s.dict_key
+			<where>
+				<if test="fileName != null">
+					FILE_NAME=#{fileName}
+				</if>
+				<if test="uploadUser != null">
+					and UPLOAD_USER=#{uploadUser}
+				</if>
+				<if test="uploadDateStart != null">
+					<![CDATA[	and UPLOAD_DATE >= #{uploadDateStart}	]]>
+				</if>
+				<if test="uploadDateEnd != null">
+					<![CDATA[	and UPLOAD_DATE <= #{uploadDateEnd}	]]>
+				</if>
+			</where>
+
+		<if test="sortColumn != null">
+			) si order by ${sortColumn} ${sortOrder}
+		</if>
+
+	    <if test="endRowNum != 0">
+			) t
+			<![CDATA[
+				where rownum <= #{endRowNum}) where rn >= #{startRowNum}
+			]]>
+		</if>
+	</select>
+
+	<select id="findFileUploadRecordById" parameterType="java.lang.String"
+		resultType="FileUploadRecord">
+			select f.ID as id,
+			  f.FILE_FULL_PATH as fileFullPath,
+			  f.FILE_NAME as fileName,
+			  f.FILE_SIZE as fileSize,
+			  f.UPLOAD_USER as uploadUser,
+			  f.UPLOAD_DATE as uploadDate,
+			  f.FILE_TYPE as fileType,
+			  s.dict_value as fileTypeName
+			from FILE_UPLOAD_RECORD f left join (select dict_key, dict_value from dict_item where dict_info_type='UPLOAD_FILE_TYPE') s on f.file_type=s.dict_key
+
+			where id=#{value}
+	</select>
+
+	<select id="findFileUploadRecordListByFileIdList" parameterType="ArrayList" resultType="FileUploadRecord">
+		select ID as id,
+			  FILE_FULL_PATH as fileFullPath,
+			  FILE_NAME as fileName,
+			  FILE_SIZE as fileSize,
+			  UPLOAD_USER as uploadUser,
+			  UPLOAD_DATE as uploadDate,
+			  f.FILE_TYPE as fileType,
+			  s.dict_value as fileTypeName
+		from FILE_UPLOAD_RECORD f left join (select dict_key, dict_value from dict_item where dict_info_type='UPLOAD_FILE_TYPE') s on f.file_type=s.dict_key
+		where id in
+		<foreach collection="list" index="index" item="fileId" open="(" separator="," close=")">
+			#{fileId}
+		</foreach>
+	</select>
+
+	<delete id="deleteFileUploadRecord" parameterType="java.lang.String">
+		delete from FILE_UPLOAD_RECORD where id=#{value}
+	</delete>
+
+  <insert id="insertFileUploadRecord" parameterType="FileUploadRecord">
+    insert into FILE_UPLOAD_RECORD (
+      ID,
+	  FILE_FULL_PATH,
+	  FILE_NAME,
+	  FILE_SIZE,
+	  UPLOAD_USER,
+	  UPLOAD_DATE,
+	  FILE_TYPE
+  ) values (
+  	  #{id,jdbcType=VARCHAR},
+  	  #{fileFullPath,jdbcType=VARCHAR},
+  	  #{fileName, jdbcType=VARCHAR},
+  	  #{fileSize,jdbcType=NUMERIC},
+      #{uploadUser,jdbcType=VARCHAR},
+      #{uploadDate,jdbcType=TIMESTAMP},
+      #{fileType,jdbcType=VARCHAR}
+  )
+  </insert>
+
+</mapper>

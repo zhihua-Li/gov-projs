@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ConsignOrganizationMapper">
+
+
+	<cache type="org.mybatis.caches.oscache.OSCache" eviction="LRU" flushInterval="21600000" size="1024" readOnly="true"></cache>
+
+  <select id="findAllConsignOrganizationList" resultType="ConsignOrganization">
+  		select co.ID as id,
+				co.ORGANIZATION_CODE as organizationCode,
+				co.ORGANIZATION_NAME as organizationName,
+				co.PARENT_ORGANIZATION_ID as parentOrganizationId,
+				co.ORGANIZATION_ADDRESS as organizationAddress,
+				co.PHONENUM as phonenum,
+				co.POSTCODE as postcode,
+				co.CREATE_DATE as createDate,
+				co.CREATE_USER as createUser,
+				co.UPDATE_DATE as updateDate,
+				co.UPDATE_USER as updateUser,
+				co.REMARK as remark
+		from CONSIGN_ORGANIZATION co
+  </select>
+
+  <select id="findConsignOrganizationById" parameterType="java.lang.String"
+  	resultType="ConsignOrganization">
+  		select co.ID as id,
+				co.ORGANIZATION_CODE as organizationCode,
+				co.ORGANIZATION_NAME as organizationName,
+				co.PARENT_ORGANIZATION_ID as parentOrganizationId,
+				co.ORGANIZATION_ADDRESS as organizationAddress,
+				co.PHONENUM as phonenum,
+				co.POSTCODE as postcode,
+				co.CREATE_DATE as createDate,
+				co.CREATE_USER as createUser,
+				co.UPDATE_DATE as updateDate,
+				co.UPDATE_USER as updateUser,
+				co.REMARK as remark
+		from CONSIGN_ORGANIZATION co
+		where co.ID=#{value}
+  </select>
+
+  <select id="findConsignOrganizationList" parameterType="ConsignOrganization"
+  	resultType="ConsignOrganization">
+  	<if test="endRowNum != 0">
+		select * from (
+			select t.*, rownum rn from (
+	</if>
+		select co.ID as id,
+				co.ORGANIZATION_CODE as organizationCode,
+				co.ORGANIZATION_NAME as organizationName,
+				co.PARENT_ORGANIZATION_ID as parentOrganizationId,
+				co.ORGANIZATION_ADDRESS as organizationAddress,
+				co.PHONENUM as phonenum,
+				co.POSTCODE as postcode,
+				co.CREATE_DATE as createDate,
+				co.CREATE_USER as createUser,
+				co.UPDATE_DATE as updateDate,
+				co.UPDATE_USER as updateUser,
+				co.REMARK as remark
+			from CONSIGN_ORGANIZATION co
+			<where>
+				<if test="organizationCode != null">
+					co.ORGANIZATION_CODE=#{organizationCode}
+				</if>
+				<if test="organizationName != null">
+					AND co.ORGANIZATION_NAME=#{organizationName}
+				</if>
+				<if test="id != null">
+					AND co.ID=#{id}
+				</if>
+			</where>
+
+		<if test="endRowNum != 0">
+			) t
+			<![CDATA[
+				where rownum <= #{endRowNum}) where rn >= #{startRowNum}
+			]]>
+		</if>
+
+  </select>
+
+
+	<select id="findConsignOrganizationListCount" parameterType="ConsignOrganization"
+  		resultType="int">
+  		select count(co.ID)
+		from CONSIGN_ORGANIZATION co
+		<where>
+			<if test="organizationCode != null">
+				co.ORGANIZATION_CODE=#{organizationCode}
+			</if>
+			<if test="organizationName != null">
+				AND co.ORGANIZATION_NAME=#{organizationName}
+			</if>
+			<if test="id != null">
+				AND co.ID=#{id}
+			</if>
+		</where>
+  </select>
+
+  <insert id="insertConsignOrganization"  parameterType="ConsignOrganization">
+  	insert into CONSIGN_ORGANIZATION (
+			ID, ORGANIZATION_CODE, ORGANIZATION_NAME, PARENT_ORGANIZATION_ID, ORGANIZATION_ADDRESS,
+				PHONENUM, POSTCODE, CREATE_DATE, CREATE_USER, UPDATE_DATE, UPDATE_USER, REMARK
+		) values (
+			#{id,jdbcType=VARCHAR}, #{organizationCode,jdbcType=VARCHAR}, #{organizationName,jdbcType=VARCHAR},
+			#{parentOrganizationId,jdbcType=VARCHAR}, #{organizationAddress,jdbcType=VARCHAR},
+			#{phonenum,jdbcType=VARCHAR}, #{postcode,jdbcType=VARCHAR},
+			#{createDate,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR},
+			#{updateDate,jdbcType=VARCHAR}, #{updateUser,jdbcType=VARCHAR},
+			#{remark,jdbcType=TIMESTAMP}
+		)
+  </insert>
+
+
+  <update id="updateConsignOrganization" parameterType="ConsignOrganization">
+  	update CONSIGN_ORGANIZATION t
+		<set>
+			<if test="organizationCode != null">
+				t.ORGANIZATION_CODE=#{organizationCode, jdbcType=VARCHAR},
+			</if>
+
+			<if test="organizationName != null">
+				t.ORGANIZATION_NAME=#{organizationName, jdbcType=VARCHAR},
+			</if>
+
+			<if test="parentOrganizationId != null">
+				t.PARENT_ORGANIZATION_ID=#{parentOrganizationId, jdbcType=VARCHAR},
+			</if>
+
+			<if test="organizationAddress != null">
+				t.ORGANIZATION_ADDRESS=#{organizationAddress, jdbcType=VARCHAR},
+			</if>
+
+			<if test="phonenum != null">
+				t.PHONENUM=#{phonenum, jdbcType=VARCHAR},
+			</if>
+
+			<if test="updateDate != null">
+				t.UPDATE_DATE=#{updateDate, jdbcType=TIMESTAMP},
+			</if>
+
+			<if test="updateUser != null">
+				t.UPDATE_USER=#{updateUser, jdbcType=VARCHAR},
+			</if>
+		</set>
+
+		where t.ID=#{id}
+  </update>
+
+
+  <delete id="deleteConsignOrganizationById" parameterType="java.lang.String">
+  	delete from CONSIGN_ORGANIZATION where ID=#{value}
+  </delete>
+
+
+</mapper>

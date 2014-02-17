@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+	<package name="quality" namespace="/pages/quality" extends="lims-default">
+
+		<action name="listQualitySample" class="com.lims.action.quality.QualitySampleAction" method="queryQualitySample">
+			<result name="success" type="dispatcher">/pages/quality/listQualitySample.jsp</result>
+		</action>
+
+		<action name="intoQualitySample" class="com.lims.action.quality.QualitySampleAction" method="into">
+			<result name="success" type="dispatcher">/pages/quality/editQualitySample.jsp</result>
+		</action>
+
+		<action name="submitQualitySample" class="com.lims.action.quality.QualitySampleAction" method="submit">
+			<result name="success" type="redirect">/pages/quality/listQualitySample.action</result>
+		</action>
+
+		<action name="queryPolluteRecord" class="com.lims.action.quality.QualitySampleAction" method="queryPolluteRecord">
+			<result name="success" type="dispatcher">/pages/quality/listPolluteRecord.jsp</result>
+		</action>
+
+		<action name="intoQualityRecordDetail" class="com.lims.action.quality.QualitySampleAction" method="intoQualityRecordDetail">
+			<result name="success" type="dispatcher">/pages/quality/qualityRecordDetail.jsp</result>
+		</action>
+
+	</package>
+
+</struts>

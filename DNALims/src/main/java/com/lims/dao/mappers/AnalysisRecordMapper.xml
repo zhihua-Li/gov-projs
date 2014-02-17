@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="AnalysisRecordMapper">
+
+	<select id="findAnalysisRecordByBoardId" parameterType="java.lang.String"
+		resultType="AnalysisRecord">
+		select ID as id,
+			ANALYSIS_DATE as analysisDate,
+			ANALYSIS_INSTRUMENT as analysisInstrument,
+			CREATE_DATE as createDate,
+			CREATE_USER as createUser,
+			REMARK as remark,
+			BOARD_INFO_ID as boardInfoId
+		from ANALYSIS_RECORD
+		where BOARD_INFO_ID=#{value}
+	</select>
+
+	<insert id="insertAnalysisRecord" parameterType="AnalysisRecord">
+		insert into ANALYSIS_RECORD (ID, ANALYSIS_DATE, ANALYSIS_INSTRUMENT,
+	      CREATE_DATE, CREATE_USER, REMARK, BOARD_INFO_ID
+	      )
+	    values (#{id,jdbcType=VARCHAR}, #{analysisDate,jdbcType=TIMESTAMP}, #{analysisInstrument,jdbcType=VARCHAR},
+	      #{createDate,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},
+	      #{boardInfoId, jdbcType=VARCHAR}
+	      )
+	</insert>
+
+	<update id="updateAnalysisRecord" parameterType="AnalysisRecord">
+		update ANALYSIS_RECORD
+	    set ANALYSIS_DATE = #{analysisDate,jdbcType=TIMESTAMP},
+	      ANALYSIS_INSTRUMENT = #{analysisInstrument,jdbcType=VARCHAR},
+	      REMARK = #{remark,jdbcType=VARCHAR},
+	      UPDATE_DATE = #{updateDate,jdbcType=TIMESTAMP},
+	      UPDATE_USER = #{updateUser,jdbcType=VARCHAR}
+	    where ID = #{id,jdbcType=VARCHAR}
+	</update>
+
+
+	<delete id="deleteAnalysisRecordByConsignmentId" parameterType="java.lang.String">
+		delete ANALYSIS_RECORD a where a.BOARD_INFO_ID in (
+			select b.id from BOARD_INFO b where b.CONSIGNMENT_NO in (
+				select c.consignment_no from consignment c where c.id=#{value}
+			)
+		)
+	</delete>
+
+	<delete id="deleteAnalysisRecordByBoardId" parameterType="java.lang.String">
+		delete ANALYSIS_RECORD a where a.BOARD_INFO_ID =#{value}
+	</delete>
+
+</mapper>

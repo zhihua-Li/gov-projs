@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PcrRecordMapper">
+
+	<select id="findPcrRecordByBoardInfoId" parameterType="String"
+		resultType="PcrRecord">
+		select
+			ID as id,
+			PCR_DATE as pcrDate,
+			PCR_INSTRUMENT as pcrInstrument,
+	      	TEMPERATURE as temperature,
+	      	HUMIDITY as humidity,
+	      	LOOP_COUNT as loopCount,
+	      	PCR_SYSTEM as pcrSystem,
+	      	REAGENT_NO as reagentNo,
+	      	REMARK as remark,
+	      	BOARD_INFO_ID as boardInfoId,
+	      	CREATE_USER as createUser,
+	      	CREATE_DATE as createDate,
+	      	PCR_USER as pcrUser
+	    from PCR_RECORD
+	    where BOARD_INFO_ID=#{value}
+	</select>
+
+	<insert id="insertPcrRecord" parameterType="PcrRecord">
+		insert into PCR_RECORD (ID, PCR_DATE, PCR_INSTRUMENT,
+	      TEMPERATURE, HUMIDITY, LOOP_COUNT,
+	      PCR_SYSTEM, REAGENT_NO, REMARK,
+	      BOARD_INFO_ID, CREATE_USER, CREATE_DATE, PCR_USER)
+	    values (#{id,jdbcType=VARCHAR}, #{pcrDate,jdbcType=TIMESTAMP}, #{pcrInstrument,jdbcType=VARCHAR},
+	      #{temperature,jdbcType=VARCHAR}, #{humidity,jdbcType=VARCHAR}, #{loopCount,jdbcType=VARCHAR},
+	      #{pcrSystem,jdbcType=VARCHAR}, #{reagentNo,jdbcType=VARCHAR},
+	      #{remark,jdbcType=VARCHAR}, #{boardInfoId, jdbcType=VARCHAR},
+	      #{createUser,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{pcrUser,jdbcType=VARCHAR})
+	</insert>
+
+	<delete id="deletePcrRecordByConsignmentId" parameterType="java.lang.String">
+		delete PCR_RECORD p where p.BOARD_INFO_ID in (
+			select b.id from BOARD_INFO b where b.CONSIGNMENT_NO in (
+				select c.consignment_no from consignment c where c.id=#{value}
+			)
+		)
+	</delete>
+
+
+	<delete id="deletePcrRecordByBoardId" parameterType="java.lang.String">
+		delete PCR_RECORD p where p.BOARD_INFO_ID=#{value}
+	</delete>
+
+</mapper>

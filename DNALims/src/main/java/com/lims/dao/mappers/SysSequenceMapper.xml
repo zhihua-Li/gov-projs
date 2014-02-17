@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="SysSequenceMapper">
+
+	<resultMap type="SysSequence" id="sysSequenceResult">
+		<result property="id" column="ID" />
+		<result property="sequenceNo" column="SEQUENCE_NO" />
+		<result property="sequenceType" column="SEQUENCE_TYPE" />
+		<result property="currentDate" column="CURRENT_DATE" />
+		<result property="updateUser" column="UPDATE_USER" />
+		<result property="updateDate" column="UPDATE_DATE" />
+	</resultMap>
+
+	<select id="findSysSequenceByType" parameterType="java.lang.String"
+		resultMap="sysSequenceResult">
+		select t.* from SYS_SEQUENCE t where t.SEQUENCE_TYPE=#{value}
+	</select>
+
+	<insert id="insertSysSequence" parameterType="SysSequence">
+		insert into SYS_SEQUENCE (
+			ID,
+			SEQUENCE_NO,
+			SEQUENCE_TYPE,
+			CURRENT_DATE,
+			UPDATE_DATE
+		) values (
+			#{id},
+			#{sequenceNo},
+			#{sequenceType},
+			#{currentDate},
+			#{updateDate}
+		)
+	</insert>
+
+
+	<update id="updateSysSequence" parameterType="SysSequence">
+		update SYS_SEQUENCE set SEQUENCE_NO=#{sequenceNo},
+			CURRENT_DATE=#{currentDate},UPDATE_DATE=#{updateDate}
+		where ID=#{id}
+	</update>
+
+</mapper>

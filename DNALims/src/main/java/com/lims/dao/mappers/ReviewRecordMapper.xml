@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ReviewRecordMapper">
+
+	<select id="findReviewRecordByBoardId" parameterType="java.lang.String"
+		resultType="ReviewRecord">
+		select ID as id,
+			REVIEW_DATE as reviewDate,
+			REVIEW_USER as reviewUserId,
+			BOARD_ID as boardId
+		from REVIEW_RECORD
+		where BOARD_ID=#{value}
+	</select>
+
+	<insert id="insertReviewRecord" parameterType="ReviewRecord">
+		insert into REVIEW_RECORD (
+			ID,
+			REVIEW_DATE,
+			REVIEW_USER,
+	      BOARD_ID
+	      )
+	    values (
+	    #{id,jdbcType=VARCHAR},
+	    #{reviewDate,jdbcType=TIMESTAMP},
+	    #{reviewUserId,jdbcType=VARCHAR},
+	      #{boardId, jdbcType=VARCHAR}
+	      )
+	</insert>
+
+
+	<delete id="deleteReviewRecordByConsignmentId" parameterType="java.lang.String">
+		delete REVIEW_RECORD a where a.BOARD_ID in (
+			select b.id from BOARD_INFO b where b.CONSIGNMENT_NO in (
+				select c.consignment_no from consignment c where c.id=#{value}
+			)
+		)
+	</delete>
+
+	<delete id="deleteReviewRecordByBoardId" parameterType="java.lang.String">
+		delete REVIEW_RECORD a where a.BOARD_ID =#{value}
+	</delete>
+
+</mapper>

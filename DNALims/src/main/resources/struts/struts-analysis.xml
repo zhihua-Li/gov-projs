@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+	<package name="analysis" namespace="/pages/analysis" extends="lims-default">
+
+		<action name="intoCodisImport" class="com.lims.action.analysis.CodisImportAction" method="intoCodisImport">
+			<result name="success" type="dispatcher">/pages/analysis/codisImport.jsp</result>
+		</action>
+		
+		<action name="checkBoardExists" class="com.lims.action.analysis.CodisImportAction" method="checkBoardExists">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+
+		<action name="submitCodisImport" class="com.lims.action.analysis.CodisImportAction" method="submitCodisImport">
+			<result name="importResult" type="dispatcher">/pages/analysis/codisImportResult.jsp</result>
+			<result name="qualityResult" type="dispatcher">/pages/analysis/qualityCodisCompareResult.jsp</result>
+		</action>
+		
+		<action name="viewQualityCompareGene" class="com.lims.action.analysis.CodisImportAction" method="viewQualityCompareGene">
+			<result name="success" type="dispatcher">/pages/analysis/qualityCodisCompareResultDetail.jsp</result>
+		</action>
+
+		<action name="viewImportedSampleGene" class="com.lims.action.analysis.CodisImportAction" method="viewImportedSampleGene">
+			<result name="success" type="dispatcher">/pages/analysis/viewImportedSampleGene.jsp</result>
+		</action>
+
+
+		<action name="resultCheck" class="com.lims.action.analysis.ExamineAnalysisAction" method="query">
+			<result name="success" type="dispatcher">/pages/analysis/resultCheck.jsp</result>
+		</action>
+
+		<action name="intoSampleSourceGeneList" class="com.lims.action.analysis.ExamineAnalysisAction" method="intoSampleSourceGeneList">
+			<result name="success" type="dispatcher">/pages/analysis/sampleInfoListOfBoard.jsp</result>
+			<!-- <result name="quality" type="dispatcher">/pages/analysis/qualityResultDetail.jsp</result> -->
+		</action>
+
+		<action name="viewSampleSourceGeneList" class="com.lims.action.analysis.ExamineAnalysisAction" method="viewSampleSourceGeneList">
+			<result name="success" type="dispatcher">/pages/analysis/viewSampleInfoListOfBoard.jsp</result>
+		</action>
+
+<!--
+		<action name="batchReview" class="com.lims.action.analysis.ExamineAnalysisAction" method="batchReview">
+			<result name="success" type="redirect">/pages/analysis/resultCheck.action</result>
+		</action>
+
+		<action name="singleReview" class="com.lims.action.analysis.ExamineAnalysisAction" method="singleReview">
+			<result name="success" type="redirect">/pages/analysis/resultCheck.action</result>
+		</action>
+ -->
+ 		<action name="sampleSourceGeneReviewPass" class="com.lims.action.analysis.ExamineAnalysisAction" method="sampleSourceGeneReviewPass">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+
+		<action name="sampleSourceGeneReviewNotPass" class="com.lims.action.analysis.ExamineAnalysisAction" method="sampleSourceGeneReviewNotPass">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+
+
+		<action name="intoSampleSourceGeneDetail" class="com.lims.action.analysis.ExamineAnalysisAction" method="intoResultDetail">
+			<result name="success" type="dispatcher">
+				/pages/analysis/geneResultDetail.jsp
+			</result>
+		</action>
+
+		<action name="changeReagentKit" class="com.lims.action.analysis.ExamineAnalysisAction" method="changeReagentKit"/>
+
+		<action name="submitReview" class="com.lims.action.analysis.ExamineAnalysisAction" method="submitReview">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+
+
+		<action name="examineAnalysisQuery" class="com.lims.action.analysis.ExamineAnalysisAction" method="query">
+			<result name="success" type="dispatcher">/pages/analysis/examineAnalysisQuery.jsp</result>
+		</action>
+
+
+		<action name="examineRecord" class="com.lims.action.analysis.ExamineAnalysisAction" method="examineRecord">
+			<result name="success" type="dispatcher">/pages/analysis/examineRecordDownload.jsp</result>
+		</action>
+
+		<action name="downloadExamineInfo" class="com.lims.action.analysis.ExamineAnalysisAction" method="downloadExamineInfo">
+			<result name="success" type="stream">
+                <!-- 下载文件类型定义 -->
+                <param name="contentType">
+                    application/octet-stream;charset=UTF-8
+                </param>
+                <!-- 下载文件处理方法 -->
+                <param name="contentDisposition">
+                    attachment;filename="${downloadFileName}"
+                </param>
+                <!-- 下载文件输出流定义 -->
+                <param name="inputName">inputStream</param>
+                <param name="bufferSize">4096</param>
+            </result>
+		</action>
+
+		<action name="generatePcrExamineRecord" class="com.lims.action.analysis.ExamineAnalysisAction" method="generatePcrExamineRecord">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+
+		<action name="zipDownloadPcrExamineInfo" class="com.lims.action.analysis.ExamineAnalysisAction" method="zipDownloadPcrExamineInfo">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+
+		<action name="downloadPcrExamineInfo" class="com.lims.action.analysis.ExamineAnalysisAction" method="downloadPcrExamineInfo">
+			<result name="success" type="stream">
+                <!-- 下载文件类型定义 -->
+                <param name="contentType">
+                    application/octet-stream;charset=UTF-8
+                </param>
+                <!-- 下载文件处理方法 -->
+                <param name="contentDisposition">
+                    attachment;filename="${downloadFileName}"
+                </param>
+                <!-- 下载文件输出流定义 -->
+                <param name="inputName">inputStream</param>
+                <param name="bufferSize">4096</param>
+            </result>
+		</action>
+
+	</package>
+
+</struts>

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="CompareResultMapper">
+
+	<select id="findCompareResultViewById" parameterType="String"
+		resultType="CompareResultView">
+		select
+				cr.ID as id,
+				cr.SOURCE_GENE_ID as sourceGeneId,
+				cr.MATCH_GENE_ID as matchGeneId,
+				cr.MATCH_DATE as matchDate,
+				cr.SAME_NUM as sameNum,
+				cr.DIFF_NUM as diffNum,
+				cr.MATCH_DESC as matchDesc,
+				cr.UPDATE_DATE as updateDate,
+				cr.UPDATE_USER as updateUser,
+				cr.REMARK as remark,
+				cr.SOURCE_SAMPLE_ID as sourceSampleId,
+				cr.MATCH_SAMPLE_ID as matchSampleId,
+				cr.SOURCE_SAMPLE_NO as sourceSampleNo,
+				cr.MATCH_SAMPLE_NO as matchSampleNo,
+				cr.SOURCE_SAMPLE_TYPE as sourceSampleType,
+				cr.MATCH_SAMPLE_TYPE as matchSampleType,
+				cr.SOURCE_GENE_INFO as sourceGeneInfo,
+				cr.MATCH_GENE_INFO as matchGeneInfo,
+				cr.SOURCE_STORE_USER as sourceStoreUser,
+				cr.MATCH_STORE_USER as matchStoreUser,
+				cr.SOURCE_STORE_DATE as sourceStoreDate,
+				cr.MATCH_STORE_DATE as matchStoreDate
+			from v_compare_result_view cr
+			where cr.id=#{value}
+	</select>
+
+	<select id="findCompareResultList" parameterType="CompareResultQuery"
+		resultType="CompareResultView">
+
+		<if test="endRowNum != 0">
+			select * from (
+				select t.*, rownum rn from (
+		</if>
+
+		<if test="sortColumn != null">
+			select t1.* from (
+		</if>
+			select
+				cr.ID as id,
+				cr.SOURCE_GENE_ID as sourceGeneId,
+				cr.MATCH_GENE_ID as matchGeneId,
+				cr.MATCH_DATE as matchDate,
+				cr.SAME_NUM as sameNum,
+				cr.DIFF_NUM as diffNum,
+				cr.MATCH_DESC as matchDesc,
+				cr.UPDATE_DATE as updateDate,
+				cr.UPDATE_USER as updateUser,
+				cr.REMARK as remark,
+				cr.SOURCE_SAMPLE_ID as sourceSampleId,
+				cr.MATCH_SAMPLE_ID as matchSampleId,
+				cr.SOURCE_SAMPLE_NO as sourceSampleNo,
+				cr.MATCH_SAMPLE_NO as matchSampleNo,
+				cr.SOURCE_SAMPLE_TYPE as sourceSampleType,
+				cr.MATCH_SAMPLE_TYPE as matchSampleType,
+				cr.SOURCE_GENE_INFO as sourceGeneInfo,
+				cr.MATCH_GENE_INFO as matchGeneInfo,
+				cr.SOURCE_STORE_USER as sourceStoreUser,
+				cr.MATCH_STORE_USER as matchStoreUser,
+				cr.SOURCE_STORE_DATE as sourceStoreDate,
+				cr.MATCH_STORE_DATE as matchStoreDate
+			from v_compare_result_view cr
+			<where>
+				<if test="sampleNo != null">
+					(cr.SOURCE_SAMPLE_NO=#{sampleNo} or cr.MATCH_SAMPLE_NO=#{sampleNo})
+				</if>
+				<if test="instoreUser != null">
+					and (cr.SOURCE_STORE_USER=#{instoreUser} or cr.MATCH_STORE_USER=#{instoreUser})
+				</if>
+				<if test="instoreDateStart != null">
+					<![CDATA[
+						and (cr.SOURCE_STORE_DATE>=#{instoreDateStart, jdbcType=TIMESTAMP} or cr.MATCH_STORE_DATE>=#{instoreDateStart, jdbcType=TIMESTAMP})
+					]]>
+				</if>
+				<if test="instoreDateEnd != null">
+					<![CDATA[
+						and (cr.SOURCE_STORE_DATE<=#{instoreDateEnd, jdbcType=TIMESTAMP} or cr.MATCH_STORE_DATE<=#{instoreDateEnd, jdbcType=TIMESTAMP})
+					]]>
+				</if>
+			</where>
+		<if test="sortColumn != null">
+			) t1 order by ${sortColumn} ${sortOrder}
+		</if>
+		<if test="sortColumn == null">
+			ORDER BY cr.MATCH_DATE desc
+		</if>
+
+		<if test="endRowNum != 0">
+			) t
+			<![CDATA[
+				where rownum <= #{endRowNum}) where rn >= #{startRowNum}
+			]]>
+		</if>
+
+	</select>
+
+
+	<select id="findCompareResultListCount" parameterType="SampleSourceGeneQuery"
+		resultType="int">
+
+		select count(cr.ID)
+			from v_compare_result_view cr
+			<where>
+				<if test="sampleNo != null">
+					(cr.SOURCE_SAMPLE_NO=#{sampleNo} or cr.MATCH_SAMPLE_NO=#{sampleNo})
+				</if>
+				<if test="instoreUser != null">
+					and (cr.SOURCE_STORE_USER=#{instoreUser} or cr.MATCH_STORE_USER=#{instoreUser})
+				</if>
+				<if test="instoreDateStart != null">
+					<![CDATA[
+						and (cr.SOURCE_STORE_DATE>=#{instoreDateStart, jdbcType=TIMESTAMP} or cr.MATCH_STORE_DATE>=#{instoreDateStart, jdbcType=TIMESTAMP})
+					]]>
+				</if>
+				<if test="instoreDateEnd != null">
+					<![CDATA[
+						and (cr.SOURCE_STORE_DATE<=#{instoreDateEnd, jdbcType=TIMESTAMP} or cr.MATCH_STORE_DATE<=#{instoreDateEnd, jdbcType=TIMESTAMP})
+					]]>
+				</if>
+			</where>
+	</select>
+
+	<select id="insertCompareResult" parameterType="ArrayList">
+		insert into COMPARE_RESULT (
+			ID,
+			SOURCE_GENE_ID,
+			MATCH_GENE_ID,
+			MATCH_DATE,
+			SAME_NUM,
+			DIFF_NUM,
+			MATCH_DESC,
+			REMARK
+		)
+		<foreach collection="list" item="compareResult" index="index" separator="union all">
+			select
+				#{compareResult.id, jdbcType=VARCHAR},
+				#{compareResult.sourceGeneId, jdbcType=VARCHAR},
+				#{compareResult.matchGeneId, jdbcType=VARCHAR},
+				#{compareResult.matchDate, jdbcType=TIMESTAMP},
+				#{compareResult.sameNum, jdbcType=INTEGER},
+				#{compareResult.diffNum, jdbcType=INTEGER},
+				#{compareResult.matchDesc, jdbcType=VARCHAR},
+				#{compareResult.remark, jdbcType=VARCHAR}
+			from dual
+		</foreach>
+	</select>
+
+	<select id="findQuickCompareMatchedSample" parameterType="java.lang.String"
+		resultType="com.lims.domain.vo.CompareResultView">
+		select
+			g.id as matchGeneId,
+			g.SAMPLE_ID as matchSampleId,
+			g.GENOTYPE_INFO as matchGeneInfo,
+			s.SAMPLE_NO as matchSampleNo,
+			c.CONSIGNMENT_NO as matchConsignmentNo,
+			co.ORGANIZATION_NAME as matchConsignOrgName
+		from GENE_INFO g, SAMPLE_INFO s, CONSIGNMENT c, CONSIGN_ORGANIZATION co
+		where g.ID=#{value}
+			and s.ID=g.SAMPLE_ID
+			and c.ID=s.CONSIGNMENT_ID
+			and c.ORGANIZATION_ID=co.ID(+)
+	</select>
+
+</mapper>

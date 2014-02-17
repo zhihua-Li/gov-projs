@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<settings>
+		<setting name="cacheEnabled" value="true" />
+		<setting name="lazyLoadingEnabled" value="false" />
+	</settings>
+
+	<typeAliases>
+		<!-- PO对象别名 -->
+		<typeAlias alias="SysUser" type="com.lims.domain.po.SysUser" />
+		<typeAlias alias="SysMenu" type="com.lims.domain.po.SysMenu" />
+		<typeAlias alias="SysRole" type="com.lims.domain.po.SysRole" />
+		<typeAlias alias="SysRoleMenu" type="com.lims.domain.po.SysRoleMenu" />
+		<typeAlias alias="SysUserRole" type="com.lims.domain.po.SysUserRole" />
+		<typeAlias alias="DictItem" type="com.lims.domain.po.DictItem" />
+		<typeAlias alias="DictInfo" type="com.lims.domain.po.DictInfo" />
+		<typeAlias alias="SysSequence" type="com.lims.domain.po.SysSequence" />
+		<typeAlias alias="SampleInfo" type="com.lims.domain.po.SampleInfo" />
+		<typeAlias alias="AnalysisRecord" type="com.lims.domain.po.AnalysisRecord" />
+		<typeAlias alias="ExamineRecord" type="com.lims.domain.po.ExamineRecord" />
+		<typeAlias alias="ReviewRecord" type="com.lims.domain.po.ReviewRecord" />
+		<typeAlias alias="BoardInfo" type="com.lims.domain.po.BoardInfo" />
+		<typeAlias alias="BoardSampleMap" type="com.lims.domain.po.BoardSampleMap" />
+		<typeAlias alias="CompareResult" type="com.lims.domain.po.CompareResult" />
+		<typeAlias alias="Consignment" type="com.lims.domain.po.Consignment" />
+		<typeAlias alias="ConsignOrganization" type="com.lims.domain.po.ConsignOrganization" />
+		<typeAlias alias="GeneInfo" type="com.lims.domain.po.GeneInfo" />
+		<typeAlias alias="SampleSourceGene" type="com.lims.domain.po.SampleSourceGene" />
+		<typeAlias alias="LocusInfo" type="com.lims.domain.po.LocusInfo" />
+		<typeAlias alias="PcrRecord" type="com.lims.domain.po.PcrRecord" />
+		<typeAlias alias="PolluteRecord" type="com.lims.domain.po.PolluteRecord" />
+		<typeAlias alias="QualityControlSample" type="com.lims.domain.po.QualityControlSample" />
+		<typeAlias alias="ReagentKit" type="com.lims.domain.po.ReagentKit" />
+		<typeAlias alias="CompareQueue" type="com.lims.domain.po.CompareQueue" />
+		<typeAlias alias="ComparisonSettings" type="com.lims.domain.po.ComparisonSettings" />
+		<typeAlias alias="FileUploadRecord" type="com.lims.domain.po.FileUploadRecord" />
+		<typeAlias alias="CodisSample" type="com.lims.domain.po.CodisSample" />
+
+		<!-- query -->
+		<typeAlias alias="SampleInfoQuery" type="com.lims.domain.query.SampleInfoQuery" />
+		<typeAlias alias="BoardInfoQuery" type="com.lims.domain.query.BoardInfoQuery" />
+		<typeAlias alias="SampleSourceGeneQuery" type="com.lims.domain.query.SampleSourceGeneQuery"/>
+		<typeAlias alias="CompareResultQuery" type="com.lims.domain.query.CompareResultQuery" />
+		<typeAlias alias="PolluteRecordQuery" type="com.lims.domain.query.PolluteRecordQuery" />
+		<typeAlias alias="ConsignmentQuery" type="com.lims.domain.query.ConsignmentQuery" />
+
+
+		<!--  vo  -->
+		<typeAlias alias="SampleInfoView" type="com.lims.domain.vo.SampleInfoView" />
+		<typeAlias alias="GeneInfoView" type="com.lims.domain.vo.GeneInfoView" />
+		<typeAlias alias="BoardInfoView" type="com.lims.domain.vo.BoardInfoView" />
+		<typeAlias alias="SampleSourceGeneView" type="com.lims.domain.vo.SampleSourceGeneView"/>
+		<typeAlias alias="QualityControlSampleView" type="com.lims.domain.vo.QualityControlSampleView" />
+		<typeAlias alias="CompareResultView" type="com.lims.domain.vo.CompareResultView" />
+		<typeAlias alias="PolluteRecordView" type="com.lims.domain.vo.PolluteRecordView" />
+		<typeAlias alias="ConsignmentView" type="com.lims.domain.vo.ConsignmentView" />
+
+
+	</typeAliases>
+
+	<mappers>
+
+		<mapper resource="com/lims/dao/mappers/AnalysisRecordMapper.xml"/>
+		<mapper resource="com/lims/dao/mappers/ExamineRecordMapper.xml"/>
+		<mapper resource="com/lims/dao/mappers/ReviewRecordMapper.xml"/>
+		<mapper resource="com/lims/dao/mappers/BoardInfoMapper.xml"/>
+		<mapper resource="com/lims/dao/mappers/BoardSampleMapMapper.xml"/>
+		<mapper resource="com/lims/dao/mappers/InstoreAndCompareMapper.xml"/>
+		<mapper resource="com/lims/dao/mappers/ConsignmentMapper.xml"/>
+		<mapper resource="com/lims/dao/mappers/ConsignOrganizationMapper.xml"/>
+		<mapper resource="com/lims/dao/mappers/GeneInfoMapper.xml"/>
+		<mapper resource="com/lims/dao/mappers/CompareQueueMapper.xml"/>
+		<mapper resource="com/lims/dao/mappers/SampleSourceGeneMapper.xml"/>
+		<mapper resource="com/lims/dao/mappers/LocusInfoMapper.xml"/>
+		<mapper resource="com/lims/dao/mappers/PcrRecordMapper.xml"/>
+		<mapper resource="com/lims/dao/mappers/PolluteRecordMapper.xml"/>
+		<mapper resource="com/lims/dao/mappers/QualityControlSampleMapper.xml"/>
+		<mapper resource="com/lims/dao/mappers/ReagentKitMapper.xml"/>
+		<mapper resource="com/lims/dao/mappers/SampleInfoMapper.xml"/>
+		<mapper resource="com/lims/dao/mappers/SysUserMapper.xml"/>
+		<mapper resource="com/lims/dao/mappers/SysRoleMapper.xml"/>
+		<mapper resource="com/lims/dao/mappers/SysMenuMapper.xml"/>
+		<mapper resource="com/lims/dao/mappers/DictItemMapper.xml"/>
+		<mapper resource="com/lims/dao/mappers/SysSequenceMapper.xml"/>
+		<mapper resource="com/lims/dao/mappers/ComparisonSettingsMapper.xml"/>
+		<mapper resource="com/lims/dao/mappers/CompareResultMapper.xml"/>
+		<mapper resource="com/lims/dao/mappers/FileUploadRecordMapper.xml"/>
+		<mapper resource="com/lims/dao/mappers/CodisSampleMapper.xml"/>
+
+	</mappers>
+
+</configuration>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ComparisonSettingsMapper">
+
+	<cache type="org.mybatis.caches.oscache.OSCache"
+		eviction="LRU"
+		flushInterval="21600000"
+		size="1024"
+		readOnly="true" />
+
+	<select id="findComparisonSettings" resultType="ComparisonSettings"
+		useCache="true" flushCache="false">
+		select
+			ID as id,
+			SAME_LOWER_LIMIT_NUM as sameLowerLimitNum,
+			DEFAULT_SAME_LOWER_LIMIT_NUM as defaultSameLowerLimitNum,
+			DIFF_UPPER_LIMIT_NUM as diffUpperLimitNum,
+			DEFAULT_DIFF_UPPER_LIMIT_NUM as defaultUpperLimitNum,
+			UPDATE_DATE as updateDate,
+			UPDATE_USER as updateUser,
+			REMARK as remark
+		from COMPARISON_SETTINGS
+  	</select>
+
+	<update id="updateComparisonSettings" parameterType="ComparisonSettings" flushCache="true">
+		update COMPARISON_SETTINGS
+		set
+			SAME_LOWER_LIMIT_NUM=#{sameLowerLimitNum, jdbcType=INTEGER},
+			DIFF_UPPER_LIMIT_NUM=#{diffUpperLimitNum, jdbcType=INTEGER},
+			UPDATE_DATE=#{updateDate, jdbcType=TIMESTAMP},
+			UPDATE_USER=#{updateUser, jdbcType=VARCHAR},
+			REMARK=#{remark, jdbcType=VARCHAR}
+		where ID=#{id, jdbcType=VARCHAR}
+	</update>
+
+</mapper>

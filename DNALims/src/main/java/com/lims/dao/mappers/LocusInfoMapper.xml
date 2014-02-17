@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="LocusInfoMapper">
+
+
+	<select id="findLocusInfoById" parameterType="String"
+		resultType="LocusInfo">
+		select
+			ID as id,
+  			GENO_NAME as genoName,
+  			GENO_ALIAS as genoAlias,
+  			GENO_NO as genoNo,
+  			GENO_DESC as genoDesc,
+  			CREATE_DATE as createDate,
+  			CREATE_USER as createUser,
+  			UPDATE_DATE as updateDate,
+  			UPDATE_USER as updateUser
+  		from LOCUS_INFO
+  		where ID=#{value}
+	</select>
+
+	<select id="findMaxGenoNo" resultType="int">
+		select to_number(nvl(max(GENO_NO), '00'))
+		from LOCUS_INFO
+	</select>
+
+
+	<select id="findLocusInfoList" parameterType="LocusInfo"
+		resultType="LocusInfo">
+		select
+			ID as id,
+  			GENO_NAME as genoName,
+  			GENO_ALIAS as genoAlias,
+  			GENO_NO as genoNo,
+  			GENO_DESC as genoDesc,
+  			CREATE_DATE as createDate,
+  			CREATE_USER as createUser,
+  			UPDATE_DATE as updateDate,
+  			UPDATE_USER as updateUser
+  		from LOCUS_INFO
+
+  		<where>
+  			<if test="id != null">
+  				ID=#{id, jdbcType=VARCHAR}
+  			</if>
+  			<if test="genoName != null">
+  				AND GENO_NAME=#{genoName, jdbcType=VARCHAR}
+  			</if>
+  			<if test="genoAlias != null">
+  				AND GENO_ALIAS like '%'||#{genoAlias, jdbcType=VARCHAR}||'%'
+  			</if>
+  			<if test="genoNo != null">
+  				AND GENO_NO=#{genoNo, jdbcType=VARCHAR}
+  			</if>
+  		</where>
+
+  		order by GENO_NO
+	</select>
+
+	<select id="findAllLocusInfoList" resultType="LocusInfo">
+		select
+			ID as id,
+  			GENO_NAME as genoName,
+  			GENO_ALIAS as genoAlias,
+  			GENO_NO as genoNo,
+  			GENO_DESC as genoDesc,
+  			CREATE_DATE as createDate,
+  			CREATE_USER as createUser,
+  			UPDATE_DATE as updateDate,
+  			UPDATE_USER as updateUser
+  		from LOCUS_INFO
+  		order by GENO_NO
+	</select>
+
+
+  <insert id="insertLocusInfo" parameterType="LocusInfo">
+    insert into LOCUS_INFO (
+    	ID,
+    	GENO_NAME,
+    	GENO_ALIAS,
+    	GENO_NO,
+      	GENO_DESC,
+      	CREATE_DATE,
+      	CREATE_USER,
+      	UPDATE_DATE,
+      	UPDATE_USER
+    ) values (
+    	#{id,jdbcType=VARCHAR},
+    	#{genoName,jdbcType=VARCHAR},
+    	#{genoAlias,jdbcType=VARCHAR},
+    	#{genoNo,jdbcType=VARCHAR},
+      	#{genoDesc,jdbcType=VARCHAR},
+      	#{createDate,jdbcType=TIMESTAMP},
+      	#{createUser,jdbcType=VARCHAR},
+      	#{updateDate,jdbcType=TIMESTAMP},
+      	#{updateUser,jdbcType=VARCHAR}
+    )
+  </insert>
+
+  <update id="updateLocusInfo" parameterType="LocusInfo">
+    update LOCUS_INFO
+    set GENO_NAME = #{genoName,jdbcType=VARCHAR},
+      GENO_ALIAS = #{genoAlias,jdbcType=VARCHAR},
+      GENO_NO = #{genoNo,jdbcType=VARCHAR},
+      GENO_DESC = #{genoDesc,jdbcType=VARCHAR},
+      UPDATE_DATE = #{updateDate,jdbcType=TIMESTAMP},
+      UPDATE_USER = #{updateUser,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

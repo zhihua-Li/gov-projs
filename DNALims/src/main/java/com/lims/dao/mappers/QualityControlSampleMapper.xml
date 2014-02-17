@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http:// mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="QualityControlSampleMapper">
+
+	<select id="findQualityControlSampleById" parameterType="String"
+		resultType="QualityControlSampleView">
+		select
+				q.ID as id,
+				q.FULL_NAME as fullName,
+				q.GENDER as gender,
+				q.ORGANIZATION_ID as organizationId,
+				q.DUTY as duty,
+				q.POLICE_NO as policeNo,
+				q.PHONENUM as phonenum,
+				q.SAMPLE_NO as sampleNo,
+				q.GENOTYPE_INFO as genotypeInfo,
+				q.IDCARD_NO as idcardNo,
+				q.OTHER_GENOTYPE as otherGenotype,
+				q.REMARK as remark,
+				q.CREATE_USER as createUser,
+				q.CREATE_DATE as createDate,
+				q.UPDATE_USER as updateUser,
+				q.UPDATE_DATE as updateDate,
+				q.ORGANIZATION_SUB_NAME as organizationSubName,
+				o.ORGANIZATION_NAME as organizationName,
+				d.DICT_VALUE as genderName
+			from QUALITY_CONTROL_SAMPLE q
+				left join CONSIGN_ORGANIZATION o on q.ORGANIZATION_ID=o.ID
+				left join (select DICT_KEY, DICT_VALUE from DICT_ITEM WHERE DICT_INFO_TYPE='GENDER') d on q.GENDER=d.DICT_KEY
+			where q.ID=#{value}
+	</select>
+
+	<select id="findQualityControlSampleList" parameterType="QualityControlSample"
+		resultType="QualityControlSampleView">
+
+		<if test="endRowNum != 0">
+			select * from (
+				select t.*, rownum rn from (
+		</if>
+
+			select
+				q.ID as id,
+				q.FULL_NAME as fullName,
+				q.GENDER as gender,
+				q.ORGANIZATION_ID as organizationId,
+				q.DUTY as duty,
+				q.POLICE_NO as policeNo,
+				q.PHONENUM as phonenum,
+				q.SAMPLE_NO as sampleNo,
+				q.GENOTYPE_INFO as genotypeInfo,
+				q.IDCARD_NO as idcardNo,
+				q.OTHER_GENOTYPE as otherGenotype,
+				q.REMARK as remark,
+				q.CREATE_USER as createUser,
+				q.CREATE_DATE as createDate,
+				q.UPDATE_USER as updateUser,
+				q.UPDATE_DATE as updateDate,
+				q.ORGANIZATION_SUB_NAME as organizationSubName,
+				o.ORGANIZATION_NAME as organizationName,
+				d.DICT_VALUE as genderName
+			from QUALITY_CONTROL_SAMPLE q
+				left join CONSIGN_ORGANIZATION o on q.ORGANIZATION_ID=o.ID
+				left join (select DICT_KEY, DICT_VALUE from DICT_ITEM WHERE DICT_INFO_TYPE='GENDER') d on q.GENDER=d.DICT_KEY
+			<where>
+				<if test="id != null">
+					q.ID=#{id, jdbcType=VARCHAR}
+				</if>
+				<if test="fullName != null">
+					AND q.FULL_NAME=#{fullName, jdbcType=VARCHAR}
+				</if>
+				<if test="sampleNo != null">
+					AND q.SAMPLE_NO=#{sampleNo, jdbcType=VARCHAR}
+				</if>
+				<if test="policeNo != null">
+					AND q.POLICE_NO=#{policeNo, jdbcType=VARCHAR}
+				</if>
+				<if test="idcardNo != null">
+					AND q.IDCARD_NO=#{idcardNo, jdbcType=VARCHAR}
+				</if>
+			</where>
+
+		<if test="endRowNum != 0">
+			) t
+			<![CDATA[
+				where rownum <= #{endRowNum}) where rn >= #{startRowNum}
+			]]>
+		</if>
+
+	</select>
+
+
+	<select id="findQualityControlSampleListCount" parameterType="QualityControlSample"
+		resultType="int">
+
+			select count(q.ID)
+			from QUALITY_CONTROL_SAMPLE q
+			<where>
+				<if test="id != null">
+					q.ID=#{id, jdbcType=VARCHAR}
+				</if>
+				<if test="fullName != null">
+					AND q.FULL_NAME=#{fullName, jdbcType=VARCHAR}
+				</if>
+				<if test="sampleNo != null">
+					AND q.SAMPLE_NO=#{sampleNo, jdbcType=VARCHAR}
+				</if>
+				<if test="policeNo != null">
+					AND q.POLICE_NO=#{policeNo, jdbcType=VARCHAR}
+				</if>
+				<if test="idcardNo != null">
+					AND q.IDCARD_NO=#{idcardNo, jdbcType=VARCHAR}
+				</if>
+			</where>
+
+	</select>
+
+  <insert id="insertQualityControlSample" parameterType="QualityControlSampleView">
+    insert into QUALITY_CONTROL_SAMPLE (
+    	ID,
+    	FULL_NAME,
+    	GENDER,
+      	ORGANIZATION_ID,
+      	DUTY,
+      	POLICE_NO,
+      	PHONENUM,
+      	SAMPLE_NO,
+      	GENOTYPE_INFO,
+      	IDCARD_NO,
+      	OTHER_GENOTYPE,
+      	REMARK,
+      	CREATE_USER,
+      	CREATE_DATE,
+      	ORGANIZATION_SUB_NAME
+    ) values (
+    	#{id,jdbcType=VARCHAR},
+    	#{fullName,jdbcType=VARCHAR},
+    	#{gender,jdbcType=VARCHAR},
+      	#{organizationId,jdbcType=VARCHAR},
+      	#{duty,jdbcType=VARCHAR},
+      	#{policeNo,jdbcType=VARCHAR},
+      	#{phonenum,jdbcType=VARCHAR},
+      	#{sampleNo,jdbcType=VARCHAR},
+      	#{genotypeInfo,jdbcType=VARCHAR},
+      	#{idcardNo,jdbcType=VARCHAR},
+      	#{otherGenotype,jdbcType=VARCHAR},
+      	#{remark,jdbcType=VARCHAR},
+      	#{createUser,jdbcType=VARCHAR},
+      	#{createDate,jdbcType=TIMESTAMP},
+      	#{organizationSubName,jdbcType=VARCHAR}
+    )
+  </insert>
+
+  <update id="updateQualityControlSample" parameterType="QualityControlSampleView">
+    update QUALITY_CONTROL_SAMPLE
+    set FULL_NAME = #{fullName,jdbcType=VARCHAR},
+      GENDER = #{gender,jdbcType=VARCHAR},
+      ORGANIZATION_ID = #{organizationId, jdbcType=VARCHAR},
+      DUTY = #{duty,jdbcType=VARCHAR},
+      POLICE_NO = #{policeNo,jdbcType=VARCHAR},
+      PHONENUM = #{phonenum,jdbcType=VARCHAR},
+      SAMPLE_NO = #{sampleNo,jdbcType=VARCHAR},
+      GENOTYPE_INFO = #{genotypeInfo,jdbcType=VARCHAR},
+      IDCARD_NO = #{idcardNo, jdbcType=VARCHAR},
+      OTHER_GENOTYPE = #{otherGenotype, jdbcType=VARCHAR},
+      REMARK = #{remark,jdbcType=VARCHAR},
+      UPDATE_USER = #{updateUser, jdbcType=VARCHAR},
+      UPDATE_DATE = #{updateDate, jdbcType=TIMESTAMP},
+      ORGANIZATION_SUB_NAME = #{organizationSubName, jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

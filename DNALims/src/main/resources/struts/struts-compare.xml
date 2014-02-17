@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+	<package name="compare" namespace="/pages/compare" extends="lims-default">
+
+		<action name="queryWaitingInstoreComparison" class="com.lims.action.comparison.ComparisonAction" method="queryWaitingInstoreComparison">
+			<result name="success" type="dispatcher">/pages/comparison/listWaitingInstore.jsp</result>
+		</action>
+
+		<action name="batchInstore" class="com.lims.action.comparison.ComparisonAction" method="batchInstore">
+			<result name="success" type="redirect">/pages/compare/queryWaitingInstoreComparison.action</result>
+		</action>
+
+		<action name="intoSampleGeneDetail" class="com.lims.action.comparison.ComparisonAction" method="into">
+			<result name="success" type="dispatcher">/pages/comparison/intoSampleGeneDetail.jsp</result>
+		</action>
+
+		<action name="qualitySampleCompare" class="com.lims.action.comparison.ComparisonAction" method="qualitySampleCompare">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+
+		<action name="instoreSampleGene" class="com.lims.action.comparison.ComparisonAction" method="submit">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+
+		<action name="queryCompareResult" class="com.lims.action.comparison.CompareResultAction" method="queryCompareResult">
+			<result name="success" type="dispatcher">/pages/comparison/listCompareResult.jsp</result>
+		</action>
+
+		<action name="intoCompareResultDetail" class="com.lims.action.comparison.CompareResultAction" method="into">
+			<result name="success" type="dispatcher">/pages/comparison/compareResultDetail.jsp</result>
+		</action>
+
+		<action name="comparisonSettings" class="com.lims.action.comparison.ComparisonSettingsAction"  method="into">
+			<result name="success" type="dispatcher">/pages/comparison/comparisonSettings.jsp</result>
+		</action>
+
+		<action name="submitComparisonSettings" class="com.lims.action.comparison.ComparisonSettingsAction"  method="submit">
+			<result name="success" type="dispatcher">/pages/comparison/comparisonSettings.jsp</result>
+		</action>
+
+		<action name="batchImportCodis" class="com.lims.action.comparison.BatchImportCodisAction" method="into">
+			<result name="success" type="dispatcher">/pages/comparison/intoBatchImportCodis.jsp</result>
+		</action>
+
+		<action name="submitBatchCodisImport" class="com.lims.action.comparison.BatchImportCodisAction" method="submit">
+			<result name="success" type="dispatcher">/pages/comparison/batchImportCodisResult.jsp</result>
+		</action>
+
+		<action name="importedCodisSampleQuery" class="com.lims.action.comparison.BatchImportCodisAction" method="query">
+			<result name="success" type="dispatcher">/pages/comparison/batchImportCodisSamples.jsp</result>
+		</action>
+
+		<action name="deleteCodisSample" class="com.lims.action.comparison.BatchImportCodisAction" method="delete">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+
+		<action name="updateCodisSampleNo" class="com.lims.action.comparison.BatchImportCodisAction" method="update">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+
+		<action name="viewGeneInfo" class="com.lims.action.comparison.BatchImportCodisAction" method="viewCodisSampleGene">
+			<result name="success" type="dispatcher">/pages/comparison/viewCodisSampleGene.jsp</result>
+		</action>
+
+		<action name="changeCodisSampleGeneReagentKit" class="com.lims.action.comparison.BatchImportCodisAction" method="changeCodisSampleGeneReagentKit"/>
+
+		<action name="saveUpdatedCodisSampleGene" class="com.lims.action.comparison.BatchImportCodisAction" method="saveUpdatedCodisSampleGene">
+			<result name="success" type="json">
+				<param name="root">jsonData</param>
+			</result>
+		</action>
+
+	</package>
+
+</struts>

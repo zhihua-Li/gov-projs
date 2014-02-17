@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+	<bean name="/remoteFileUploadService" class="org.springframework.remoting.caucho.HessianServiceExporter">
+		<property name="service">
+			<ref bean="fileUploadService"/>
+		</property>
+		<property name="serviceInterface">
+			<value>com.lims.service.fileupload.FileUploadService</value>
+		</property>
+	</bean>
+
+
+	<bean name="/remoteSysUserService" class="org.springframework.remoting.caucho.HessianServiceExporter">
+		<property name="service">
+			<ref bean="sysUserService"/>
+		</property>
+		<property name="serviceInterface">
+			<value>com.lims.service.sysuser.SysUserService</value>
+		</property>
+	</bean>
+
+	<bean name="/remoteSysDictService" class="org.springframework.remoting.caucho.HessianServiceExporter">
+		<property name="service">
+			<ref bean="sysDictService"/>
+		</property>
+		<property name="serviceInterface">
+			<value>com.lims.service.dict.SysDictService</value>
+		</property>
+	</bean>
+
+	<bean name="/remoteReagentKitService" class="org.springframework.remoting.caucho.HessianServiceExporter">
+		<property name="service">
+			<ref bean="reagentKitService"/>
+		</property>
+		<property name="serviceInterface">
+			<value>com.lims.service.locus.ReagentKitService</value>
+		</property>
+	</bean>
+
+	<bean name="/remoteConsignOrganizationService" class="org.springframework.remoting.caucho.HessianServiceExporter">
+		<property name="service">
+			<ref bean="consignOrganizationService"/>
+		</property>
+		<property name="serviceInterface">
+			<value>com.lims.service.organization.ConsignOrganizationService</value>
+		</property>
+	</bean>
+
+
+	<bean name="/remoteCodisBatchImportService" class="org.springframework.remoting.caucho.HessianServiceExporter">
+		<property name="service">
+			<ref bean="codisBatchImportService"/>
+		</property>
+		<property name="serviceInterface">
+			<value>com.lims.service.codisbatchimport.CodisBatchImportService</value>
+		</property>
+	</bean>
+</beans>

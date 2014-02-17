@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="BoardSampleMapMapper">
+
+  <insert id="addBoardSampleMap" parameterType="BoardSampleMap">
+    insert into BOARD_SAMPLE_MAP (
+    	ID,
+    	BOARD_ID,
+    	SAMPLE_ID,
+      	SAMPLE_POSITION,
+      	EXTRACT_USER,
+      	EXTRACT_DATE
+    ) values (
+    	#{id,jdbcType=VARCHAR},
+    	#{boardId,jdbcType=VARCHAR},
+    	#{sampleId,jdbcType=VARCHAR},
+      	#{samplePosition,jdbcType=VARCHAR},
+      	#{extractUser,jdbcType=VARCHAR},
+      	#{extractDate,jdbcType=TIMESTAMP}
+    )
+  </insert>
+
+  <delete id="deleteBoardSampleMapByBoardIdAndPosition" parameterType="java.util.HashMap">
+  	delete from BOARD_SAMPLE_MAP where BOARD_ID=#{boardId} and SAMPLE_POSITION=#{samplePosition}
+  </delete>
+
+</mapper>

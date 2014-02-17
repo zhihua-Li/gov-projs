@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="keyGeneratorService" parent="baseTransactionProxy">
+		<property name="target">
+			<bean class="com.lims.service.KeyGeneratorServiceImpl" />
+		</property>
+	</bean>
+
+	<!-- services... -->
+	<bean id="sysUserService" parent="baseTransactionProxy">
+		<property name="target">
+			<bean class="com.lims.service.sysuser.SysUserServiceImpl">
+				<property name="dao"><ref bean="baseDao"/></property>
+				<property name="keyGeneratorService"><ref bean="keyGeneratorService"/></property>
+			</bean>
+		</property>
+	</bean>
+
+
+	<bean id="sysRoleService" parent="baseTransactionProxy">
+		<property name="target">
+			<bean class="com.lims.service.sysrole.SysRoleServiceImpl">
+				<property name="dao"><ref bean="baseDao"/></property>
+				<property name="keyGeneratorService"><ref bean="keyGeneratorService"/></property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="sysMenuService" parent="baseTransactionProxy">
+		<property name="target">
+			<bean class="com.lims.service.sysmenu.SysMenuServiceImpl">
+				<property name="dao"><ref bean="baseDao"/></property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="consignOrganizationService" parent="baseTransactionProxy">
+		<property name="target">
+			<bean class="com.lims.service.organization.ConsignOrganizationServiceImpl">
+				<property name="dao"><ref bean="baseDao"/></property>
+				<property name="keyGeneratorService"><ref bean="keyGeneratorService"/></property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="sysDictService" parent="baseTransactionProxy">
+		<property name="target">
+			<bean class="com.lims.service.dict.SysDictServiceImpl">
+				<property name="dao"><ref bean="baseDao"/></property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="consignmentService" parent="baseTransactionProxy">
+		<property name="target">
+			<bean class="com.lims.service.consignment.ConsignmentServiceImpl">
+				<property name="dao"><ref bean="baseDao"/></property>
+				<property name="keyGeneratorService"><ref bean="keyGeneratorService"/></property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="boardInfoService" parent="baseTransactionProxy">
+		<property name="target">
+			<bean class="com.lims.service.sample.BoardInfoServiceImpl">
+				<property name="dao"><ref bean="baseDao"/></property>
+				<property name="keyGeneratorService"><ref bean="keyGeneratorService"/></property>
+			</bean>
+		</property>
+	</bean>
+
+</beans>

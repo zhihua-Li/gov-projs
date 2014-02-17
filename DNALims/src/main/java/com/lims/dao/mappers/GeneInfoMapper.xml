@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="GeneInfoMapper">
+
+	<select id="findGeneInfoViewBySampleId" parameterType="String"
+		resultType="GeneInfoView">
+		select
+			g.ID as id,
+	    	g.SAMPLE_ID as sampleId,
+	    	g.GENE_TYPE as geneType,
+	      	g.REAGENT_KIT as reagentKit,
+	      	g.GENOTYPE_INFO as genotypeInfo,
+	      	g.STORE_DATE as storeDate,
+	      	g.STORE_USER as storeUser,
+	      	g.MATCH_STATUS as matchStatus,
+	      	g.UPDATE_DATE as updateDate,
+	      	g.UPDATE_USER as updateUser,
+	      	g.REMARK as remark,
+	      	g.SAMPLE_TYPE as sampleType,
+	      	s.SAMPLE_NO as sampleNo,
+	      	r.REAGENT_NAME as reagentKitName
+	    from GENE_INFO g, SAMPLE_INFO s, REAGENT_KIT r
+	    where g.SAMPLE_TYPE='1' AND g.SAMPLE_ID=s.ID and g.REAGENT_KIT=r.ID(+)
+	    	 and g.SAMPLE_ID=#{value}
+	    UNION
+	    select
+			g.ID as id,
+	    	g.SAMPLE_ID as sampleId,
+	    	g.GENE_TYPE as geneType,
+	      	g.REAGENT_KIT as reagentKit,
+	      	g.GENOTYPE_INFO as genotypeInfo,
+	      	g.STORE_DATE as storeDate,
+	      	g.STORE_USER as storeUser,
+	      	g.MATCH_STATUS as matchStatus,
+	      	g.UPDATE_DATE as updateDate,
+	      	g.UPDATE_USER as updateUser,
+	      	g.REMARK as remark,
+	      	g.SAMPLE_TYPE as sampleType,
+	      	s.SAMPLE_NO as sampleNo,
+	      	r.REAGENT_NAME as reagentKitName
+	    from GENE_INFO g, CODIS_SAMPLE s, REAGENT_KIT r
+	    where g.SAMPLE_TYPE='2' AND g.SAMPLE_ID=s.ID and g.REAGENT_KIT=r.ID(+)
+	    	 and g.SAMPLE_ID=#{value}
+	</select>
+
+	<select id="findAllGeneInfoList" resultType="GeneInfo">
+		select
+			ID as id,
+	    	SAMPLE_ID as sampleId,
+	    	GENE_TYPE as geneType,
+	      	REAGENT_KIT as reagentKit,
+	      	GENOTYPE_INFO as genotypeInfo,
+	      	STORE_DATE as storeDate,
+	      	STORE_USER as storeUser,
+	      	MATCH_STATUS as matchStatus,
+	      	UPDATE_DATE as updateDate,
+	      	UPDATE_USER as updateUser,
+	      	REMARK as remark,
+	      	SAMPLE_TYPE as sampleType
+	    from GENE_INFO
+	</select>
+
+	<select id="insertGeneInfoBatch" parameterType="ArrayList">
+	    insert into GENE_INFO (
+	    	ID,
+	    	SAMPLE_ID,
+	    	GENE_TYPE,
+	      	REAGENT_KIT,
+	      	GENOTYPE_INFO,
+	      	STORE_DATE,
+	      	STORE_USER,
+	      	MATCH_STATUS,
+	      	UPDATE_DATE,
+	      	UPDATE_USER,
+	      	REMARK,
+	      	SAMPLE_TYPE
+	    )
+	    <foreach collection="list" item="geneInfo" index="index" separator="union all">
+			select
+				#{geneInfo.id, jdbcType=VARCHAR},
+				#{geneInfo.sampleId, jdbcType=VARCHAR},
+				#{geneInfo.geneType, jdbcType=VARCHAR},
+				#{geneInfo.reagentKit, jdbcType=VARCHAR},
+				#{geneInfo.genotypeInfo, jdbcType=VARCHAR},
+				#{geneInfo.storeDate, jdbcType=TIMESTAMP},
+				#{geneInfo.storeUser, jdbcType=VARCHAR},
+				#{geneInfo.matchStatus, jdbcType=VARCHAR},
+				#{geneInfo.updateDate, jdbcType=TIMESTAMP},
+				#{geneInfo.updateUser, jdbcType=VARCHAR},
+				#{geneInfo.remark, jdbcType=VARCHAR},
+				#{geneInfo.sampleType, jdbcType=VARCHAR}
+			from dual
+		</foreach>
+  </select>
+
+  <select id="findComparisonGeneList" parameterType="java.util.HashMap"
+  	resultType="com.lims.domain.bo.ComparisonGene">
+		select t.ID as id,
+			t.SAMPLE_ID	as sampleId,
+			t.GENOTYPE_INFO as genotypeInfo
+		from GENE_INFO t
+		where
+		<![CDATA[
+			rownum>#{offset} and rownum<=#{count}
+		]]>
+  </select>
+
+  <delete id="deleteGeneInfoByConsignmentId" parameterType="java.lang.String">
+		delete GENE_INFO g where g.SAMPLE_ID in (
+			select sa.id from SAMPLE_INFO sa where sa.CONSIGNMENT_ID=#{value}
+		)
+	</delete>
+
+	<delete id="deleteGeneInfoByBoardId" parameterType="java.lang.String">
+		delete GENE_INFO g where g.SAMPLE_ID in (
+			select bsm.sample_id from board_sample_map bsm where bsm.board_id=#{value}
+		)
+	</delete>
+
+	<delete id="deleteGeneInfoBySampleId" parameterType="java.lang.String">
+		delete GENE_INFO g where g.SAMPLE_ID=#{value}
+	</delete>
+
+	<update id="updateGeneInfo" parameterType="GeneInfo">
+		update GENE_INFO
+		set REAGENT_KIT=#{reagentKit},
+			GENOTYPE_INFO=#{genotypeInfo},
+			MATCH_STATUS=#{matchStatus, jdbcType=VARCHAR},
+			UPDATE_DATE=#{updateDate, jdbcType=TIMESTAMP},
+	      	UPDATE_USER=#{updateUser, jdbcType=VARCHAR},
+	      	REMARK=#{remark, jdbcType=VARCHAR}
+	     WHERE ID=#{id}
+
+	</update>
+
+</mapper>

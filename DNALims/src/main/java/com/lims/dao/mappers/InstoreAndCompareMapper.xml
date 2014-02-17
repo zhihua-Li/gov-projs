@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="InstoreAndCompareMapper">
+
+	<select id="findWaitingInstoreSampleList" parameterType="SampleSourceGeneQuery"
+		resultType="SampleSourceGeneView">
+
+		<if test="endRowNum != 0">
+			select * from (
+				select t.*, rownum rn from (
+		</if>
+
+		<if test="sortColumn != null">
+			select t1.* from (
+		</if>
+			select
+				ssg.ID as id,
+				ssg.SAMPLE_ID as sampleId,
+				ssg.BOARD_ID as boardId,
+				ssg.GENE_TYPE as geneType,
+				ssg.REAGENT_KIT as reagentKitId,
+				ssg.GENOTYPE_INFO as genotypeInfo,
+				ssg.REVIEW_STATUS as reviewStatus,
+				ssg.REVIEW_DATE as reviewDate,
+				ssg.REVIEW_USER as reviewUser,
+				ssg.ALIGN_DB_FLAG as alignDbFlag,
+				ssg.CREATE_DATE as createDate,
+				ssg.CREATE_USER as createUser,
+				ssg.UPDATE_DATE as updateDate,
+				ssg.UPDATE_USER as updateUser,
+				ssg.REMARK as remark,
+				b.CONSIGNMENT_NO as consignmentNo,
+				b.BOARD_NO as boardNo,
+				b.IMPORT_Date as importDate,
+				s.SAMPLE_NO as sampleNo,
+				c.ORGANIZATION_ID as organizationId,
+				c.ORGANIZATION_SUB_NAME as organizationSubName,
+				c.CONSIGN_DATE as consignDate,
+				co.ORGANIZATION_NAME as organizationName,
+				su.FULL_NAME as reviewUserName
+			from SAMPLE_SOURCE_GENE ssg,
+				BOARD_INFO b,
+				SAMPLE_INFO s,
+				CONSIGNMENT c,
+				CONSIGN_ORGANIZATION co,
+				SYS_USER su
+			where ssg.BOARD_ID=b.ID
+				and ssg.SAMPLE_ID=s.ID
+				and b.CONSIGNMENT_NO=c.CONSIGNMENT_NO
+				and c.ORGANIZATION_ID=co.ID(+)
+				and ssg.REVIEW_USER=su.ID(+)
+			<if test="consignmentNo != null">
+				and b.CONSIGNMENT_NO=#{consignmentNo}
+			</if>
+			<if test="sampleNo != null">
+				and s.SAMPLE_NO=#{sampleNo}
+			</if>
+			<if test="organizationId != null">
+				and c.ORGANIZATION_ID=#{organizationId}
+			</if>
+			<if test="reviewStatus != null">
+				and ssg.REVIEW_STATUS=#{reviewStatus}
+			</if>
+			<if test="alignDbFlag != null">
+				and ssg.ALIGN_DB_FLAG=#{alignDbFlag}
+			</if>
+			<if test="reviewDateStart != null">
+				<![CDATA[	and ssg.REVIEW_DATE>=#{reviewDateEnd, jdbcType=TIMESTAMP}	]]>
+			</if>
+			<if test="reviewDateEnd != null">
+				<![CDATA[	and ssg.REVIEW_DATE<=#{reviewDateEnd, jdbcType=TIMESTAMP}	]]>
+			</if>
+			<if test="reviewUser != null">
+				and ssg.REVIEW_USER=#{reviewUser, jdbcType=VARCHAR}
+			</if>
+
+		<if test="sortColumn != null">
+			) t1 order by ${sortColumn} ${sortOrder}
+		</if>
+		<if test="sortColumn == null">
+			ORDER BY ssg.SAMPLE_ID desc
+		</if>
+
+		<if test="endRowNum != 0">
+			) t
+			<![CDATA[
+				where rownum <= #{endRowNum}) where rn >= #{startRowNum}
+			]]>
+		</if>
+
+	</select>
+
+
+	<select id="findWaitingInstoreSampleListCount" parameterType="SampleSourceGeneQuery"
+		resultType="int">
+
+		select count(ssg.ID)
+			from SAMPLE_SOURCE_GENE ssg,
+				BOARD_INFO b,
+				SAMPLE_INFO s,
+				CONSIGNMENT c
+			where ssg.BOARD_ID=b.ID
+				and ssg.SAMPLE_ID=s.ID
+				and b.CONSIGNMENT_NO=c.CONSIGNMENT_NO
+			<if test="consignmentNo != null">
+				and b.CONSIGNMENT_NO=#{consignmentNo}
+			</if>
+			<if test="sampleNo != null">
+				and s.SAMPLE_NO=#{sampleNo}
+			</if>
+			<if test="alignDbFlag != null">
+				and ssg.ALIGN_DB_FLAG=#{alignDbFlag}
+			</if>
+			<if test="organizationId != null">
+				and c.ORGANIZATION_ID=#{organizationId}
+			</if>
+			<if test="reviewStatus != null">
+				and ssg.REVIEW_STATUS=#{reviewStatus}
+			</if>
+			<if test="reviewDateStart != null">
+				<![CDATA[	and ssg.REVIEW_DATE>=#{reviewDateEnd, jdbcType=TIMESTAMP}	]]>
+			</if>
+			<if test="reviewDateEnd != null">
+				<![CDATA[	and ssg.REVIEW_DATE<=#{reviewDateEnd, jdbcType=TIMESTAMP}	]]>
+			</if>
+			<if test="reviewUser != null">
+				and ssg.REVIEW_USER=#{reviewUser, jdbcType=VARCHAR}
+			</if>
+	</select>
+
+</mapper>
